@@ -5,10 +5,8 @@ import com.opensearch.entity.LookupResult;
 import com.opensearch.entity.ObjectMetadata;
 import com.opensearch.entity.Query;
 import com.opensearch.repository.MetadataRepository;
-import com.opensearch.repository.ObjectMetadataRepository;
 
 import java.util.List;
-import java.util.Random;
 
 public class SearchService {
 
@@ -27,13 +25,13 @@ public class SearchService {
 
     public List<LookupResult> search(Query query) {
         List<LookupResult> lookup = trieMap.lookup(query.getToSearch(), query.getDistance(), query.getCount());
-        for (LookupResult res: lookup) {
-            res.setMetadata(repository.deserialize(res.getSerializedId()));
+        for (LookupResult res : lookup) {
+            res.getSerializedIds().forEach(id -> res.setMetadata(repository.deserialize(id)));
         }
         return lookup;
     }
 
-    public int getIndexedSize(){
+    public int getIndexedSize() {
         return trieMap.getSize();
     }
 }

@@ -4,17 +4,20 @@ import com.opensearch.entity.ObjectMetadata;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.Random;
+
 @Profile("test")
 @Component
 public class MockedRepository implements MetadataRepository{
 
     @Override
     public Integer serialize(ObjectMetadata metadata) {
-        return null;
+        return new Random().nextInt();
     }
 
     @Override
     public ObjectMetadata deserialize(int id) {
+        System.out.println(id);
         return null;
     }
 }

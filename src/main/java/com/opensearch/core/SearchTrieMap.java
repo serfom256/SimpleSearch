@@ -81,7 +81,7 @@ public class SearchTrieMap {
                     keyNode = putSequence(key);
                     if (!keyNode.isEnd) pairs.incrementAndGet();
                 }
-                keyNode.serializedId = serializedId;
+                keyNode.addSerializedId(serializedId);
                 keyNode.isEnd = true;
             }
             return;
@@ -89,7 +89,7 @@ public class SearchTrieMap {
         rn1.lock.lock();
         TNode keyNode = putSequence(key);
         if (!keyNode.isEnd) pairs.incrementAndGet();
-        keyNode.serializedId = serializedId;
+        keyNode.addSerializedId(serializedId);
         keyNode.isEnd = true;
         rn1.lock.unlock();
     }
@@ -122,7 +122,7 @@ public class SearchTrieMap {
             prev.addSuccessor(curr);
             TNode toNext = new TNode(node.seq.charAt(0), curr, node.seq.substring(1));
             toNext.isEnd = node.isEnd;
-            toNext.serializedId = node.serializedId;
+            toNext.serializedIds = node.serializedIds;
             curr.addSuccessor(toNext);
             if (prev == root) {
                 rootNodes.get(node.element).node = curr;
@@ -151,7 +151,8 @@ public class SearchTrieMap {
         node.seq = null;
         boolean isEnd = node.isEnd;
         node.isEnd = false;
-        TNode temp = node;
+        List<Integer> ids = node.serializedIds;
+        node.serializedIds = null;
         int pos = 0, len = Math.min(seq.length(), nodeSeq.length());
         while (pos < len && seq.charAt(pos) == nodeSeq.charAt(pos)) {
             TNode newNode = new TNode(seq.charAt(pos), node);
@@ -163,20 +164,20 @@ public class SearchTrieMap {
             TNode newNode = new TNode(nodeSeq.charAt(pos), node, nodeSeq.substring(pos + 1));
             TNode inserted = new TNode(seq.charAt(pos), node, seq.substring(pos + 1));
             newNode.isEnd |= isEnd;
-            newNode.serializedId = temp.serializedId;
+            newNode.serializedIds = ids;
             node.addSuccessor(newNode);
             node.addSuccessor(inserted);
             return inserted;
         } else if (pos < nodeSeq.length()) {
             TNode newNode = new TNode(nodeSeq.charAt(pos), node, nodeSeq.substring(pos + 1));
             newNode.isEnd |= isEnd;
-            newNode.serializedId = temp.serializedId;
+            newNode.serializedIds = ids;
             node.addSuccessor(newNode);
             return node;
         } else if (pos < seq.length()) {
             TNode newNode = new TNode(seq.charAt(pos), node, seq.substring(pos + 1));
             node.isEnd |= isEnd;
-            node.serializedId = temp.serializedId;
+            node.serializedIds = ids;
             node.addSuccessor(newNode);
             return newNode;
         }
@@ -218,7 +219,7 @@ public class SearchTrieMap {
         if (!node.isEnd || entity.set.contains(node)) return;
         LookupResult lookupResult = new LookupResult();
         lookupResult.setKey(getReversed(node));
-        lookupResult.setSerializedId(node.serializedId);
+        lookupResult.setSerializedIds(node.serializedIds);
         entity.founded.add(lookupResult);
         entity.set.add(node);
     }
@@ -274,7 +275,7 @@ public class SearchTrieMap {
         if (node.successors == null) return;
         for (TNode c : node.successors) {
             if (c.isEnd) {
-                res.append(c.serializedId).append(", ");
+                res.append(c.serializedIds).append(", ");
             }
             toStringHelper(res, c);
         }

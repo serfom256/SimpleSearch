@@ -2,14 +2,16 @@ package com.opensearch.core;
 
 import com.opensearch.entity.*;
 import com.opensearch.repository.MetadataRepository;
-import com.opensearch.repository.ObjectMetadataRepository;
 import com.opensearch.service.SearchService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -26,7 +28,6 @@ public class LoadBalancer {
         executorService = Executors.newFixedThreadPool(3);
         initShards();
     }
-
 
     public SearchResponse search(final Query query) {
         List<Future<List<LookupResult>>> lookupRes = new ArrayList<>();
@@ -89,7 +90,6 @@ public class LoadBalancer {
         }
         return dp[len1][len2];
     }
-
 
     @PostConstruct
     public void index() {

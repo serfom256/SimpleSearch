@@ -9,7 +9,7 @@ public class TNode {
     public boolean isEnd;
     public final TNode prev;
     public List<TNode> successors;
-    public Integer serializedId;
+    public List<Integer> serializedIds;
 
     public TNode(Character element, TNode prev) {
         this.element = element;
@@ -40,6 +40,11 @@ public class TNode {
     public void addSuccessor(TNode node) {
         if (successors == null) successors = new CopyOnWriteArrayList<>();
         successors.add(node);
+    }
+
+    public void addSerializedId(int id) {
+        if (serializedIds == null) serializedIds = new CopyOnWriteArrayList<>();
+        serializedIds.add(id);
     }
 
     public int getSuccessorsSize() {

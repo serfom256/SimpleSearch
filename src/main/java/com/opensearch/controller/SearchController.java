@@ -4,7 +4,10 @@ import com.opensearch.core.LoadBalancer;
 import com.opensearch.entity.Query;
 import com.opensearch.entity.SearchResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.CompletableFuture;
 
 
 @RestController
@@ -18,9 +21,10 @@ public class SearchController {
         this.balancer = balancer;
     }
 
+    @Async
     @PostMapping("search")
-    public SearchResponse search(@RequestBody Query query) {
-        return balancer.search(query);
+    public CompletableFuture<SearchResponse> search(@RequestBody Query query) {
+         return CompletableFuture.completedFuture(balancer.search(query));
     }
 
 
