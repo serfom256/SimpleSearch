@@ -99,7 +99,7 @@ public class LoadBalancer {
                 List<Thread> threadList = new ArrayList<>();
                 for (int j = 0; j < 10; j++) {
                     Thread value = new Thread(() -> {
-                        for (int k = 0; k < 300_000; k++) {
+                        for (int k = 0; k < 30_000; k++) {
                             searchService.add(generateString(4, 15), new ObjectMetadata("/path/to/file", (int) (Math.random() * 10000)));
                         }
                     });

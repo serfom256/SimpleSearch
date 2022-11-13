@@ -38,7 +38,7 @@ public class ObjectMetadataRepository implements MetadataRepository{
             }
             return ps;
         }, keyHolder);
-        return (Integer) keyHolder.getKeys().get("id");
+        return keyHolder.getKey().intValue();
     }
 
     public ObjectMetadata deserialize(int id) {

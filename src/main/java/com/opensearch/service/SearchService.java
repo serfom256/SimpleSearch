@@ -21,15 +21,15 @@ public class SearchService {
     }
 
     public void add(String key, ObjectMetadata metadata) {
-//        Integer id = repository.serialize(metadata);
-        trieMap.add(key, new Random().nextInt());
+        Integer id = repository.serialize(metadata);
+        trieMap.add(key, id);
     }
 
     public List<LookupResult> search(Query query) {
         List<LookupResult> lookup = trieMap.lookup(query.getToSearch(), query.getDistance(), query.getCount());
-//        for (LookupResult res: lookup) {
-//            res.setMetadata(repository.deserialize(res.getSerializedId()));
-//        }
+        for (LookupResult res: lookup) {
+            res.setMetadata(repository.deserialize(res.getSerializedId()));
+        }
         return lookup;
     }
 
