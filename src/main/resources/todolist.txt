@@ -1,0 +1,3 @@
+create doc, docx, json, pdf, [txt, java, cpp, js, py](with default encoding) readers
+add logging
+add query execution plan chain

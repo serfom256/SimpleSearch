@@ -8,8 +8,8 @@ public class TNode {
     public String seq;
     public boolean isEnd;
     public final TNode prev;
-    public String metadata;
     public List<TNode> successors;
+    public Integer serializedId;
 
     public TNode(Character element, TNode prev) {
         this.element = element;

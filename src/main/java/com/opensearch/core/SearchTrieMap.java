@@ -1,6 +1,7 @@
 package com.opensearch.core;
 
 
+import com.opensearch.entity.LookupResult;
 import com.opensearch.entity.TNode;
 
 import java.util.*;
@@ -30,11 +31,11 @@ public class SearchTrieMap {
         private final int count;
         private final int typos;
         private final String toSearch;
-        private final List<String> founded;
+        private final List<LookupResult> founded;
         private final Set<TNode> set;
 
 
-        public SearchEntity(int count, int typos, String toSearch, List<String> founded) {
+        public SearchEntity(int count, int typos, String toSearch, List<LookupResult> founded) {
             this.count = count;
             this.typos = typos;
             this.toSearch = toSearch;
@@ -50,7 +51,7 @@ public class SearchTrieMap {
             return count <= founded.size();
         }
 
-        public List<String> getResult() {
+        public List<LookupResult> getResult() {
             return founded;
         }
     }
@@ -67,7 +68,7 @@ public class SearchTrieMap {
      * @throws IllegalArgumentException if the specified key or value is null
      * @throws IllegalArgumentException if the length of the specified key is equals 0
      */
-    private void put(String key, String metadata) {
+    public void add(String key, Integer serializedId) {
         char f1 = key.charAt(0);
         RootNode rn1 = rootNodes.get(f1);
         if (rn1 == null) {
@@ -80,7 +81,7 @@ public class SearchTrieMap {
                     keyNode = putSequence(key);
                     if (!keyNode.isEnd) pairs.incrementAndGet();
                 }
-                keyNode.metadata = metadata;
+                keyNode.serializedId = serializedId;
                 keyNode.isEnd = true;
             }
             return;
@@ -88,7 +89,7 @@ public class SearchTrieMap {
         rn1.lock.lock();
         TNode keyNode = putSequence(key);
         if (!keyNode.isEnd) pairs.incrementAndGet();
-        keyNode.metadata = metadata;
+        keyNode.serializedId = serializedId;
         keyNode.isEnd = true;
         rn1.lock.unlock();
     }
@@ -121,7 +122,7 @@ public class SearchTrieMap {
             prev.addSuccessor(curr);
             TNode toNext = new TNode(node.seq.charAt(0), curr, node.seq.substring(1));
             toNext.isEnd = node.isEnd;
-            toNext.metadata = curr.metadata;
+            toNext.serializedId = node.serializedId;
             curr.addSuccessor(toNext);
             if (prev == root) {
                 rootNodes.get(node.element).node = curr;
@@ -162,20 +163,20 @@ public class SearchTrieMap {
             TNode newNode = new TNode(nodeSeq.charAt(pos), node, nodeSeq.substring(pos + 1));
             TNode inserted = new TNode(seq.charAt(pos), node, seq.substring(pos + 1));
             newNode.isEnd |= isEnd;
-            newNode.metadata = temp.metadata;
+            newNode.serializedId = temp.serializedId;
             node.addSuccessor(newNode);
             node.addSuccessor(inserted);
             return inserted;
         } else if (pos < nodeSeq.length()) {
             TNode newNode = new TNode(nodeSeq.charAt(pos), node, nodeSeq.substring(pos + 1));
             newNode.isEnd |= isEnd;
-            newNode.metadata = temp.metadata;
+            newNode.serializedId = temp.serializedId;
             node.addSuccessor(newNode);
             return node;
         } else if (pos < seq.length()) {
             TNode newNode = new TNode(seq.charAt(pos), node, seq.substring(pos + 1));
             node.isEnd |= isEnd;
-            node.metadata = temp.metadata;
+            node.serializedId = temp.serializedId;
             node.addSuccessor(newNode);
             return newNode;
         }
@@ -189,7 +190,7 @@ public class SearchTrieMap {
         }
     }
 
-    public List<String> lookup(String input, int distance, int count) {
+    public List<LookupResult> lookup(String input, int distance, int count) {
         checkSearchConstraints(input, distance);
         SearchEntity result = new SearchEntity(count, distance, input, new ArrayList<>());
         fuzzyLookup(root, 0, distance, result);
@@ -215,7 +216,10 @@ public class SearchTrieMap {
 
     private void collectForNode(SearchEntity entity, TNode node) {
         if (!node.isEnd || entity.set.contains(node)) return;
-        entity.founded.add(getReversed(node) + " " + node.metadata);
+        LookupResult lookupResult = new LookupResult();
+        lookupResult.setKey(getReversed(node));
+        lookupResult.setSerializedId(node.serializedId);
+        entity.founded.add(lookupResult);
         entity.set.add(node);
     }
 
@@ -270,7 +274,7 @@ public class SearchTrieMap {
         if (node.successors == null) return;
         for (TNode c : node.successors) {
             if (c.isEnd) {
-                res.append(c.metadata).append(", ");
+                res.append(c.serializedId).append(", ");
             }
             toStringHelper(res, c);
         }
@@ -284,68 +288,4 @@ public class SearchTrieMap {
         return s.replace(s.length() - 2, s.length(), "]").toString();
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        SearchTrieMap map = new SearchTrieMap();
-        ArrayList<String> lst = new ArrayList<>(10_000_100);
-        for (int i = 0; i < 10_000_100; i++) {
-            lst.add(generateString(4, 15));
-        }
-        long l = System.currentTimeMillis();
-        int gap = lst.size() / 32;
-        List<Thread> threadList = new ArrayList<>();
-        for (int i = 0; i < lst.size(); i += gap) {
-            final int start = i;
-            Thread value = new Thread(() -> {
-                System.out.println(start + " " + (start + gap));
-                for (int j = start; j < start + gap; j++) {
-                    if (j == lst.size()) break;
-                    map.put(lst.get(j), "data");
-                }
-            });
-            value.start();
-            threadList.add(value);
-        }
-        for (Thread t : threadList) {
-            t.join();
-        }
-        System.out.println(System.currentTimeMillis() - l);
-        lst.clear();
-        start(map);
-    }
-
-    private static void start(SearchTrieMap map) {
-        int mb = 1024 * 1024;
-        Runtime instance = Runtime.getRuntime();
-        System.out.println("Used Memory: " + (instance.totalMemory() - instance.freeMemory()) / mb);
-        System.out.println("Indexed total: " + map.getSize());
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Input to search: ");
-        String line = sc.nextLine();
-        while (line.length() != 0) {
-            long s = System.currentTimeMillis();
-            try {
-                var result = map.lookup(line.toLowerCase(), 2, 1000);
-                System.out.println("Search time: " + (System.currentTimeMillis() - s));
-                for (var res : result) {
-                    System.out.println(res);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            System.out.print("Input to search: ");
-            line = sc.nextLine();
-        }
-    }
-
-    private static String generateString(int minLen, int maxLen) {
-        int leftLimit = 97;
-        int rightLimit = 122;
-        int len = (int) ((Math.random() * (maxLen - minLen)) + minLen);
-        StringBuilder s = new StringBuilder();
-        new Random().ints(leftLimit, rightLimit + 1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(len)
-                .forEach(s::appendCodePoint);
-        return s.toString();
-    }
 }
