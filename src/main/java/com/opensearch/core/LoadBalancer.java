@@ -30,26 +30,10 @@ public class LoadBalancer {
     }
 
     public SearchResponse search(final Query query) {
-        List<Future<List<LookupResult>>> lookupRes = new ArrayList<>();
+
         long qTime = System.currentTimeMillis();
         SearchResponse response = new SearchResponse();
-        for (SearchService searchService : shards) {
-            lookupRes.add(executorService.submit(() -> searchService.search(query)));
-        }
-        Set<LookupResult> result = new HashSet<>();
-        Set<String> prev = new HashSet<>();
-        for (var future : lookupRes) {
-            try {
-                List<LookupResult> lookupResults = future.get();
-                for (LookupResult r : lookupResults) {
-                    if (!prev.contains(r.getKey())) result.add(r);
-                    prev.add(r.getKey());
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                Thread.currentThread().interrupt();
-            }
-        }
+        List<LookupResult> result = searchAsync(query);
         List<LookupResult> collect;
         if (query.isSort()) {
             collect = result.stream().sorted(Comparator.comparingInt(a -> distance(a.getKey(), query.getToSearch()))).limit(query.getCount()).collect(Collectors.toList());
@@ -63,6 +47,42 @@ public class LoadBalancer {
         header.setSorted(query.isSort());
         response.setHeader(header);
         return response;
+    }
+
+
+    private List<LookupResult> searchAsync(Query query) {
+        List<Future<List<LookupResult>>> lookupRes = new ArrayList<>();
+        String[] splitQuery = query.getToSearch().split(" ");
+        for (String s : splitQuery) {
+            final int distance = query.isFuzziness() ? getFuzziness(s) : query.getDistance();
+            for (SearchService searchService : shards) {
+                lookupRes.add(executorService.submit(() -> searchService.search(s, distance, query.getCount())));
+            }
+        }
+        List<LookupResult> result = new ArrayList<>();
+        Set<String> prev = new HashSet<>();
+        for (var future : lookupRes) {
+            try {
+                List<LookupResult> lookupResults = future.get();
+                for (LookupResult r : lookupResults) {
+                    if (!prev.contains(r.getKey())) result.add(r);
+                    prev.add(r.getKey());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                Thread.currentThread().interrupt();
+            }
+        }
+        return result;
+    }
+
+    private int getFuzziness(String s) {
+        int fuzziness = 0;
+        for (int i = 1; i < s.length(); i += 3) {
+            fuzziness++;
+            i++;
+        }
+        return fuzziness;
     }
 
 
@@ -91,6 +111,10 @@ public class LoadBalancer {
         return dp[len1][len2];
     }
 
+    public void save() {
+
+    }
+
     @PostConstruct
     public void index() {
         List<Thread> threads = new ArrayList<>();
@@ -99,7 +123,7 @@ public class LoadBalancer {
                 List<Thread> threadList = new ArrayList<>();
                 for (int j = 0; j < 10; j++) {
                     Thread value = new Thread(() -> {
-                        for (int k = 0; k < 30_000; k++) {
+                        for (int k = 0; k < 100_000; k++) {
                             searchService.add(generateString(4, 15), new ObjectMetadata("/path/to/file", (int) (Math.random() * 10000)));
                         }
                     });

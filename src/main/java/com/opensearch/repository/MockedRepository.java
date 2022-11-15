@@ -17,7 +17,6 @@ public class MockedRepository implements MetadataRepository{
 
     @Override
     public ObjectMetadata deserialize(int id) {
-        System.out.println(id);
         return null;
     }
 }

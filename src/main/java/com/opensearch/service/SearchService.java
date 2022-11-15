@@ -23,8 +23,8 @@ public class SearchService {
         trieMap.add(key, id);
     }
 
-    public List<LookupResult> search(Query query) {
-        List<LookupResult> lookup = trieMap.lookup(query.getToSearch(), query.getDistance(), query.getCount());
+    public List<LookupResult> search(String query, int distance, int count) {
+        List<LookupResult> lookup = trieMap.lookup(query, distance, count);
         for (LookupResult res : lookup) {
             res.getSerializedIds().forEach(id -> res.setMetadata(repository.deserialize(id)));
         }

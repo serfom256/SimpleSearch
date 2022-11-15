@@ -9,4 +9,6 @@ public class Query {
     private Integer count;
     private Integer distance;
     private boolean sort;
+    private boolean fuzziness;
+    private Operator operator;
 }
