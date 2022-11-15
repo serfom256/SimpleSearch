@@ -1,12 +1,2 @@
 create doc, docx, json, pdf, [txt, java, cpp, js, py](with default encoding) readers
-add logging
 add query execution plan chain
-
-
-add fuzziness parameter to the query
-AUTO
-
-Generates an edit distance based on the length of the term. Low and high distance arguments may be optionally provided AUTO:[low],[high]. If not specified, the default values are 3 and 6, equivalent to AUTO:3,6 that make for lengths:
-0..2 Must match exactly
-3..5 One edit allowed
->5 Two edits allowed

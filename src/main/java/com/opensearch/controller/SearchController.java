@@ -1,8 +1,10 @@
 package com.opensearch.controller;
 
 import com.opensearch.core.LoadBalancer;
+import com.opensearch.entity.IndexResponse;
 import com.opensearch.entity.Query;
 import com.opensearch.entity.SearchResponse;
+import com.opensearch.service.FileReadingService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -17,22 +19,24 @@ import java.util.concurrent.CompletableFuture;
 public class SearchController {
 
     private final LoadBalancer balancer;
+    private final FileReadingService fileReadingService;
 
     @Autowired
-    public SearchController(LoadBalancer balancer) {
+    public SearchController(LoadBalancer balancer, FileReadingService fileReadingService) {
         this.balancer = balancer;
+        this.fileReadingService = fileReadingService;
     }
 
     @Async
     @PostMapping("search")
     public CompletableFuture<SearchResponse> search(@RequestBody Query query) {
         log.debug(query);
-         return CompletableFuture.completedFuture(balancer.search(query));
+        return CompletableFuture.completedFuture(balancer.search(query));
     }
 
 
     @PostMapping("index")
-    public void indexAll() {
-
+    public IndexResponse createIndexes(String document) {
+        return fileReadingService.read(document);
     }
 }

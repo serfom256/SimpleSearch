@@ -1,12 +1,10 @@
 package com.opensearch.core;
 
 import com.opensearch.entity.*;
-import com.opensearch.repository.MetadataRepository;
 import com.opensearch.service.SearchService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -18,28 +16,24 @@ import java.util.stream.Collectors;
 @Component
 public class LoadBalancer {
 
-    private final List<SearchService> shards;
-    private final MetadataRepository repository;
+    private final List<Shard> shardList;
+    private final SearchService searchService;
     private final ExecutorService executorService;
+    private static final int SHARDS = 3;
 
-    public LoadBalancer(MetadataRepository repository) {
-        this.repository = repository;
-        shards = new ArrayList<>();
-        executorService = Executors.newFixedThreadPool(3);
+    public LoadBalancer(SearchService searchService) {
+        this.searchService = searchService;
+        shardList = new ArrayList<>(SHARDS);
+        executorService = Executors.newFixedThreadPool(SHARDS);
         initShards();
     }
 
     public SearchResponse search(final Query query) {
-
         long qTime = System.currentTimeMillis();
         SearchResponse response = new SearchResponse();
-        List<LookupResult> result = searchAsync(query);
-        List<LookupResult> collect;
-        if (query.isSort()) {
-            collect = result.stream().sorted(Comparator.comparingInt(a -> distance(a.getKey(), query.getToSearch()))).limit(query.getCount()).collect(Collectors.toList());
-        } else {
-            collect = result.stream().limit(query.getCount()).collect(Collectors.toList());
-        }
+        List<LookupResult> result = searchService.lookupForResults(searchAsync(query));
+        if (query.isSort()) result.sort(Comparator.comparingInt(a -> distance(a.getKey(), query.getToSearch())));
+        List<LookupResult> collect = result.stream().limit(query.getCount()).collect(Collectors.toList());
         ResponseHeader header = new ResponseHeader();
         header.setQtime(System.currentTimeMillis() - qTime);
         header.setShardsUsed(3);
@@ -55,8 +49,8 @@ public class LoadBalancer {
         String[] splitQuery = query.getToSearch().split(" ");
         for (String s : splitQuery) {
             final int distance = query.isFuzziness() ? getFuzziness(s) : query.getDistance();
-            for (SearchService searchService : shards) {
-                lookupRes.add(executorService.submit(() -> searchService.search(s, distance, query.getCount())));
+            for (Shard shard : shardList) {
+                lookupRes.add(executorService.submit(() -> shard.find(s, distance, query.getCount())));
             }
         }
         List<LookupResult> result = new ArrayList<>();
@@ -85,10 +79,9 @@ public class LoadBalancer {
         return fuzziness;
     }
 
-
     private void initShards() {
-        for (int i = 0; i < 3; i++) {
-            shards.add(new SearchService(repository));
+        for (int i = 0; i < SHARDS; i++) {
+            shardList.add(new Shard(String.valueOf(i)));
         }
     }
 
@@ -111,63 +104,26 @@ public class LoadBalancer {
         return dp[len1][len2];
     }
 
-    public void save() {
-
+    public void createIndex(Map<String, List<ObjectMetadata>> indexes) {
+        executorService.submit(() -> makeIndex(indexes));
     }
 
-    @PostConstruct
-    public void index() {
-        List<Thread> threads = new ArrayList<>();
-        for (SearchService searchService : shards) {
-            Thread thread = new Thread(() -> {
-                List<Thread> threadList = new ArrayList<>();
-                for (int j = 0; j < 10; j++) {
-                    Thread value = new Thread(() -> {
-                        for (int k = 0; k < 100_000; k++) {
-                            searchService.add(generateString(4, 15), new ObjectMetadata("/path/to/file", (int) (Math.random() * 10000)));
-                        }
-                    });
-                    value.start();
-                    threadList.add(value);
-                }
-                for (Thread t : threadList) {
-                    try {
-                        t.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            });
-            threads.add(thread);
-            thread.start();
-        }
-        for (Thread t : threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                Thread.currentThread().interrupt();
+    private void makeIndex(Map<String, List<ObjectMetadata>> indexes) {
+        int i = 0;
+        for (Map.Entry<String, List<ObjectMetadata>> e : indexes.entrySet()) {
+            for (ObjectMetadata md : e.getValue()) {
+                shardList.get(++i % shardList.size()).save(e.getKey(), searchService.serialize(md));
             }
         }
-        for (int i = 0; i < shards.size(); i++) {
-            log.info("Shard: " + i + " indexed values: " + shards.get(i).getIndexedSize());
-        }
+        shardList.forEach(shard -> log.info("Shard: " + shard.getName() + " indexed values: " + shard.getIndexedSize()));
+        printUsedMemory();
+    }
+
+    private void printUsedMemory() {
         int mb = 1024 * 1024;
         Runtime instance = Runtime.getRuntime();
         log.info("Used Memory: " + (instance.totalMemory() - instance.freeMemory()) / mb);
     }
 
-    private String generateString(int minLen, int maxLen) {
-        int leftLimit = 97;
-        int rightLimit = 122;
-        int len = (int) ((Math.random() * (maxLen - minLen)) + minLen);
-        StringBuilder s = new StringBuilder();
-        new Random().ints(leftLimit, rightLimit + 1)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(len)
-                .forEach(s::appendCodePoint);
-        return s.toString();
-    }
 
 }
