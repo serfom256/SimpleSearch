@@ -1,6 +1,6 @@
 package com.opensearch.repository;
 
-import com.opensearch.entity.ObjectMetadata;
+import com.opensearch.entity.document.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +27,7 @@ public class ObjectMetadataRepository implements MetadataRepository{
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Integer serialize(ObjectMetadata metadata) {
+    public Integer serialize(Document metadata) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(CREATE_NEW_ENTRY_QUERY, Statement.RETURN_GENERATED_KEYS);
@@ -41,11 +41,11 @@ public class ObjectMetadataRepository implements MetadataRepository{
         return keyHolder.getKey().intValue();
     }
 
-    public ObjectMetadata deserialize(int id) {
+    public Document deserialize(int id) {
         return jdbcTemplate.queryForObject(SELECT_METADATA_QUERY, (rs, rowNum) -> read(rs), id);
     }
 
-    private void write(ObjectMetadata obj, PreparedStatement ps) throws SQLException, IOException {
+    private void write(Document obj, PreparedStatement ps) throws SQLException, IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
         objectOutputStream.writeObject(obj);
@@ -53,12 +53,12 @@ public class ObjectMetadataRepository implements MetadataRepository{
         ps.setBytes(1, byteArrayOutputStream.toByteArray());
     }
 
-    private static ObjectMetadata read(ResultSet rs) {
+    private static Document read(ResultSet rs) {
         try {
             byte[] buf = rs.getBytes("data");
             if (buf != null) {
                 ObjectInputStream objectIn = new ObjectInputStream(new ByteArrayInputStream(buf));
-                return (ObjectMetadata) objectIn.readObject();
+                return (Document) objectIn.readObject();
             }
         } catch (Exception e) {
             e.printStackTrace();

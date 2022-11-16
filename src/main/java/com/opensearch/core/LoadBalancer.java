@@ -1,6 +1,7 @@
 package com.opensearch.core;
 
 import com.opensearch.entity.*;
+import com.opensearch.entity.document.Document;
 import com.opensearch.service.SearchService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -104,14 +105,14 @@ public class LoadBalancer {
         return dp[len1][len2];
     }
 
-    public void createIndex(Map<String, List<ObjectMetadata>> indexes) {
+    public void createIndex(Map<String, List<Document>> indexes) {
         executorService.submit(() -> makeIndex(indexes));
     }
 
-    private void makeIndex(Map<String, List<ObjectMetadata>> indexes) {
+    private void makeIndex(Map<String, List<Document>> indexes) {
         int i = 0;
-        for (Map.Entry<String, List<ObjectMetadata>> e : indexes.entrySet()) {
-            for (ObjectMetadata md : e.getValue()) {
+        for (Map.Entry<String, List<Document>> e : indexes.entrySet()) {
+            for (Document md : e.getValue()) {
                 shardList.get(++i % shardList.size()).save(e.getKey(), searchService.serialize(md));
             }
         }

@@ -1,7 +1,7 @@
 package com.opensearch.service;
 
 import com.opensearch.entity.LookupResult;
-import com.opensearch.entity.ObjectMetadata;
+import com.opensearch.entity.document.Document;
 import com.opensearch.repository.MetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class SearchService {
         this.repository = repository;
     }
 
-    public int serialize(ObjectMetadata metadata) {
+    public int serialize(Document metadata) {
         return repository.serialize(metadata);
     }
 

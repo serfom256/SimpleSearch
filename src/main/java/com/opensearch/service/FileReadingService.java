@@ -1,7 +1,7 @@
 package com.opensearch.service;
 
 import com.opensearch.entity.IndexResponse;
-import com.opensearch.entity.ObjectMetadata;
+import com.opensearch.entity.document.Document;
 import com.opensearch.exceptions.PathNotFoundException;
 import com.opensearch.util.ReaderCommand;
 import lombok.extern.log4j.Log4j2;
@@ -28,11 +28,10 @@ public class FileReadingService {
         File dataDir = new File(file);
         if (!dataDir.exists()) throw new PathNotFoundException(file);
         if (dataDir.isDirectory()) {
-            List<Map<String, ObjectMetadata>> collect = Arrays.stream(dataDir.listFiles())
+            List<Map<String, ? extends Document>> collect = Arrays.stream(dataDir.listFiles())
                     .map(f -> readerCommand.getReaderByExtension(getFileExtension(f))
                             .read(f, new ArrayList<>()))
                     .collect(Collectors.toList());
-
             log.info(collect);
 
         }

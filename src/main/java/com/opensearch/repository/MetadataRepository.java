@@ -1,10 +1,10 @@
 package com.opensearch.repository;
 
 
-import com.opensearch.entity.ObjectMetadata;
+import com.opensearch.entity.document.Document;
 
 public interface MetadataRepository {
-    Integer serialize(ObjectMetadata metadata);
+    Integer serialize(Document metadata);
 
-    ObjectMetadata deserialize(int id);
+    Document deserialize(int id);
 }

@@ -8,6 +8,12 @@ group = 'com.opensearch'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.opensearch.OpensearchApplication'
+    }
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -27,7 +33,6 @@ dependencies {
     implementation 'mysql:mysql-connector-java:8.0.31'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//    compileOnly 'org.springframework.boot:spring-boot-starter-log4j2'
 }
 
 

@@ -1,7 +1,8 @@
 package com.opensearch.test;
 
 import com.opensearch.core.LoadBalancer;
-import com.opensearch.entity.ObjectMetadata;
+import com.opensearch.entity.document.Document;
+import com.opensearch.entity.document.DocumentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,9 +24,9 @@ public class Test {
     public void index() {
 
         for (int i = 0; i < 3; i++) {
-            Map<String, List<ObjectMetadata>> map = new HashMap<>();
+            Map<String, List<Document>> map = new HashMap<>();
             for (int k = 0; k < 1_000_000; k++) {
-                map.put(generateString(4, 15), Arrays.asList(new ObjectMetadata("/path/to/file", (int) (Math.random() * 10000))));
+                map.put(generateString(4, 15), Arrays.asList(new Document("/path/to/file", (int) (Math.random() * 10000), DocumentType.SIMPLE)));
 
             }
             System.out.println("map filled");

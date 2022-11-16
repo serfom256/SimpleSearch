@@ -1,6 +1,7 @@
 package com.opensearch.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.opensearch.entity.document.Document;
 import lombok.Data;
 
 import java.util.List;
@@ -10,5 +11,5 @@ public class LookupResult {
     private String key;
     @JsonIgnore
     private List<Integer> serializedIds;
-    private ObjectMetadata metadata;
+    private Document metadata;
 }

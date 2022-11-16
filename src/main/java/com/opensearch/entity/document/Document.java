@@ -1,4 +1,4 @@
-package com.opensearch.entity;
+package com.opensearch.entity.document;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,8 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ObjectMetadata implements Serializable {
+public class Document implements Serializable {
     private String path;
     private Integer position;
+    private DocumentType type;
 }
