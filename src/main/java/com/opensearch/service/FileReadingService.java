@@ -1,6 +1,6 @@
 package com.opensearch.service;
 
-import com.opensearch.entity.IndexResponse;
+import com.opensearch.entity.IndexingResponse;
 import com.opensearch.entity.document.Document;
 import com.opensearch.exceptions.PathNotFoundException;
 import com.opensearch.util.ReaderCommand;
@@ -24,7 +24,7 @@ public class FileReadingService {
         readerCommand = new ReaderCommand();
     }
 
-    public IndexResponse read(String file) {
+    public IndexingResponse read(String file) {
         File dataDir = new File(file);
         if (!dataDir.exists()) throw new PathNotFoundException(file);
         if (dataDir.isDirectory()) {

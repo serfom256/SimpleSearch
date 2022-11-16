@@ -16,14 +16,14 @@ import java.sql.Statement;
 
 @Profile("!test")
 @Repository
-public class ObjectMetadataRepository implements MetadataRepository{
+public class DocumentsRepository implements MetadataRepository{
 
     private final JdbcTemplate jdbcTemplate;
     private static final String CREATE_NEW_ENTRY_QUERY = "INSERT INTO serialized(data) VALUES(?)";
     private static final String SELECT_METADATA_QUERY = "SELECT data from serialized where id = ?";
 
     @Autowired
-    public ObjectMetadataRepository(JdbcTemplate jdbcTemplate) {
+    public DocumentsRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -53,7 +53,7 @@ public class ObjectMetadataRepository implements MetadataRepository{
         ps.setBytes(1, byteArrayOutputStream.toByteArray());
     }
 
-    private static Document read(ResultSet rs) {
+    private Document read(ResultSet rs) {
         try {
             byte[] buf = rs.getBytes("data");
             if (buf != null) {

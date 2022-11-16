@@ -1,6 +1,7 @@
 package com.opensearch.repository;
 
 import com.opensearch.entity.document.Document;
+import com.opensearch.entity.document.DocumentType;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +9,7 @@ import java.util.Random;
 
 @Profile("test")
 @Component
-public class MockedRepository implements MetadataRepository{
+public class MockedRepository implements MetadataRepository {
 
     @Override
     public Integer serialize(Document metadata) {
@@ -17,6 +18,6 @@ public class MockedRepository implements MetadataRepository{
 
     @Override
     public Document deserialize(int id) {
-        return null;
+        return new Document("/path/to/file", new Random().nextInt(), DocumentType.SIMPLE, "{\"amount\":\"100\"\n}");
     }
 }

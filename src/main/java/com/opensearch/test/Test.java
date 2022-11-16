@@ -22,11 +22,10 @@ public class Test {
 
     @PostConstruct
     public void index() {
-
         for (int i = 0; i < 3; i++) {
             Map<String, List<Document>> map = new HashMap<>();
             for (int k = 0; k < 1_000_000; k++) {
-                map.put(generateString(4, 15), Arrays.asList(new Document("/path/to/file", (int) (Math.random() * 10000), DocumentType.SIMPLE)));
+                map.put(generateString(4, 15), Arrays.asList(new Document("/path/to/file", (int) (Math.random() * 10000), DocumentType.JSON, "{\"cnt\":\"5\"}")));
 
             }
             System.out.println("map filled");

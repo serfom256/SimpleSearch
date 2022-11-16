@@ -13,4 +13,5 @@ public class Document implements Serializable {
     private String path;
     private Integer position;
     private DocumentType type;
+    private String content;
 }
