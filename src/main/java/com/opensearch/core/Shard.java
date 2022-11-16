@@ -15,11 +15,12 @@ public class Shard {
     }
 
     public void save(String key, int metadataId) {
-        trieMap.add(key, metadataId);
+        trieMap.add(key.toLowerCase(), metadataId);
     }
 
     public List<LookupResult> find(String query, int distance, int count) {
-        return trieMap.lookup(query, distance, count);
+        distance = Math.min(query.length() - 1, distance);
+        return trieMap.lookup(query.toLowerCase(), distance, count);
     }
 
     public String getName() {

@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class PdfReader implements Reader {
     @Override
-    public Map<String, Document> read(File file, List<Character> regex) {
+    public Map<String, List<Document>> read(File file, List<Character> regex) {
         PDDocument document = null;
         try {
             document = PDDocument.load(file);

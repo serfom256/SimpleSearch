@@ -20,7 +20,7 @@ public class Test {
         this.loadBalancer = loadBalancer;
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void index() {
         for (int i = 0; i < 3; i++) {
             Map<String, List<Document>> map = new HashMap<>();

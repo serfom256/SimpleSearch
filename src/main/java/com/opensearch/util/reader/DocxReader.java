@@ -9,11 +9,10 @@ import java.io.FileInputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class DocxReader implements Reader {
     @Override
-    public Map<String, Document> read(File file, List<Character> regex) {
+    public Map<String, List<Document>> read(File file, List<Character> regex) {
         try {
             FileInputStream fis = new FileInputStream(file.getAbsolutePath());
 

@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface Reader {
-    Map<String, Document> read(File file, List<Character> regex);
+    Map<String, List<Document>> read(File file, List<Character> regex);
 }

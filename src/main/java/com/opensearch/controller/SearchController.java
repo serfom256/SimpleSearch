@@ -1,6 +1,7 @@
 package com.opensearch.controller;
 
 import com.opensearch.core.LoadBalancer;
+import com.opensearch.entity.IndexingRequest;
 import com.opensearch.entity.IndexingResponse;
 import com.opensearch.entity.Query;
 import com.opensearch.entity.SearchResponse;
@@ -36,7 +37,7 @@ public class SearchController {
 
 
     @PostMapping("index")
-    public IndexingResponse createIndexes(String document) {
+    public IndexingResponse createIndexes(@RequestBody IndexingRequest document) {
         return fileReadingService.read(document);
     }
 }

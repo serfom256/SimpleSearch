@@ -200,7 +200,7 @@ public class SearchTrieMap {
 
     private void fuzzyLookup(TNode start, int pos, int typos, SearchEntity entity) {
         if (typos < 0 || start == null || entity.isFounded()) return;
-        if ((start.isEnd) && distance(getReversed(start), entity.toSearch) <= entity.typos) {
+        if (start.isEnd && distance(getReversed(start), entity.toSearch) <= entity.typos) {
             collectForNode(entity, start);
         }
         if (start.successors == null) return;
@@ -227,12 +227,14 @@ public class SearchTrieMap {
 
     private String getReversed(TNode node) {
         StringBuilder prefix = new StringBuilder();
-        if (node.seq != null) prefix.append(node.seq);
+        String temp = node.seq;
         while (node != null) {
             prefix.append(node.element);
             node = node.prev;
         }
-        return prefix.reverse().toString();
+        prefix.reverse();
+        if (temp != null) prefix.append(temp);
+        return prefix.toString();
     }
 
     private static int distance(String s1, String s2) {
