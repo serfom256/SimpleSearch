@@ -1,8 +1,9 @@
-drop table if exists serialized;
-create table serialized
+drop table if exists data;
+create table data
 (
     id   int primary key not null auto_increment,
-    data blob
+    data blob,
+    idx  varchar(1000)
 );
 
 

@@ -1,16 +1,14 @@
 package com.opensearch.controller;
 
 import com.opensearch.core.LoadBalancer;
-import com.opensearch.entity.IndexingRequest;
-import com.opensearch.entity.IndexingResponse;
-import com.opensearch.entity.Query;
-import com.opensearch.entity.SearchResponse;
+import com.opensearch.entity.*;
 import com.opensearch.service.FileReadingService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -39,5 +37,11 @@ public class SearchController {
     @PostMapping("index")
     public IndexingResponse createIndexes(@RequestBody IndexingRequest document) {
         return fileReadingService.read(document);
+    }
+
+
+    @GetMapping("shards")
+    public List<ShardState> createIndexes() {
+        return balancer.getShardsState();
     }
 }

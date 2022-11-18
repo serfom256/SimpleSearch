@@ -18,8 +18,8 @@ public class SearchService {
         this.repository = repository;
     }
 
-    public int serialize(Document metadata) {
-        return repository.serialize(metadata);
+    public int serialize(String idx, Document metadata) {
+        return repository.serialize(idx, metadata);
     }
 
     public List<LookupResult> lookupForResults(List<LookupResult> results) {

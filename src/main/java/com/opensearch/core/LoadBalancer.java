@@ -7,10 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -43,7 +40,6 @@ public class LoadBalancer {
         response.setHeader(header);
         return response;
     }
-
 
     private List<LookupResult> searchAsync(Query query) {
         List<Future<List<LookupResult>>> lookupRes = new ArrayList<>();
@@ -82,7 +78,7 @@ public class LoadBalancer {
 
     private void initShards() {
         for (int i = 0; i < SHARDS; i++) {
-            shardList.add(new Shard(String.valueOf(i)));
+            shardList.add(new Shard("shard-" + i));
         }
     }
 
@@ -106,18 +102,36 @@ public class LoadBalancer {
     }
 
     public void createIndex(Map<String, List<Document>> indexes) {
-        executorService.submit(() -> makeIndex(indexes));
+        executorService.submit(() -> {
+            try {
+                makeIndex(indexes);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void saveSingleIndex(String idx, int docId) {
+        shardList.get(getShardIdx() % shardList.size()).save(idx, docId);
+    }
+
+    public List<ShardState> getShardsState() {
+        return shardList.stream().map(s -> new ShardState(s.getName(), s.getIndexedSize())).collect(Collectors.toList());
     }
 
     private void makeIndex(Map<String, List<Document>> indexes) {
         int i = 0;
         for (Map.Entry<String, List<Document>> e : indexes.entrySet()) {
             for (Document md : e.getValue()) {
-                shardList.get(++i % shardList.size()).save(e.getKey(), searchService.serialize(md));
+                shardList.get(++i % shardList.size()).save(e.getKey(), searchService.serialize(e.getKey(), md));
             }
         }
         shardList.forEach(shard -> log.info("Shard: " + shard.getName() + " indexed values: " + shard.getIndexedSize()));
         printUsedMemory();
+    }
+
+    private int getShardIdx() {
+        return ThreadLocalRandom.current().nextInt(0, shardList.size() + 1);
     }
 
     private void printUsedMemory() {

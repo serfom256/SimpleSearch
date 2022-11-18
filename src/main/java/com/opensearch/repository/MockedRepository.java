@@ -12,7 +12,7 @@ import java.util.Random;
 public class MockedRepository implements MetadataRepository {
 
     @Override
-    public Integer serialize(Document metadata) {
+    public Integer serialize(String idx, Document metadata) {
         return new Random().nextInt();
     }
 
