@@ -17,7 +17,7 @@ public class ReaderCommand {
         readers.put("docx", new DocxReader());
         readers.put("pdf", new PdfReader());
         readers.put("json", new JsonReader());
-        defaultReader = new DefaultReader();
+        defaultReader = new FileReader();
     }
 
     public Reader getReaderByExtension(String fileExtension) {
