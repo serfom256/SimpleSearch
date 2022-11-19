@@ -1,5 +1,6 @@
 package com.opensearch.config;
 
+import com.opensearch.common.LogoPrinter;
 import com.opensearch.common.PropertiesPrinter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,6 +22,7 @@ public class EnvironmentPropertiesInitializer implements BeanPostProcessor, Init
     private final JdbcTemplate jdbcTemplate;
     private ConfigurableEnvironment environment;
     private final PropertiesPrinter printer;
+    private final LogoPrinter logoPrinter;
 
     private static final String CONFIG_TABLE = "search_config";
     private static final String SELECT_ALL_CONFIG = "SELECT name, property from " + CONFIG_TABLE;
@@ -28,10 +30,12 @@ public class EnvironmentPropertiesInitializer implements BeanPostProcessor, Init
     public EnvironmentPropertiesInitializer(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         printer = new PropertiesPrinter();
+        logoPrinter = new LogoPrinter();
     }
 
     @Override
     public void afterPropertiesSet() {
+        logoPrinter.printLogo();
         if (environment != null) {
             final Map<String, Object> properties = new HashMap<>();
             jdbcTemplate.query(SELECT_ALL_CONFIG, rs -> {

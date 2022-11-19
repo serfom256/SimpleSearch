@@ -33,12 +33,18 @@ public class SearchController {
         return CompletableFuture.completedFuture(balancer.search(query));
     }
 
+    @Async
+    @PostMapping("suggest")
+    public CompletableFuture<SearchResponse> suggest(@RequestBody Query query) {
+        log.debug(query);
+        return CompletableFuture.completedFuture(balancer.search(query));
+    }
+
 
     @PostMapping("index")
     public IndexingResponse createIndexes(@RequestBody IndexingRequest document) {
         return fileReadingService.read(document);
     }
-
 
     @GetMapping("shards")
     public List<ShardState> createIndexes() {

@@ -1,2 +1,3 @@
 create doc, docx, json, pdf, [txt, java, cpp, js, py](with default encoding) readers
 add query execution plan chain
+implement words suggestion
