@@ -17,7 +17,7 @@ public class LoadBalancer {
     private final List<Shard> shardList;
     private final SearchService searchService;
     private final ExecutorService executorService;
-    private static final int SHARDS = 3;
+    private static final int SHARDS = 6;
 
     public LoadBalancer(SearchService searchService) {
         this.searchService = searchService;
@@ -29,26 +29,47 @@ public class LoadBalancer {
     public SearchResponse search(final Query query) {
         long qTime = System.currentTimeMillis();
         SearchResponse response = new SearchResponse();
-        List<LookupResult> result = searchService.lookupForResults(searchAsync(query));
+        List<LookupResult> result = searchService.lookupForResults(searchResults(query));
         if (query.isSort()) result.sort(Comparator.comparingInt(a -> distance(a.getKey(), query.getToSearch())));
         List<LookupResult> collect = result.stream().limit(query.getCount()).collect(Collectors.toList());
-        ResponseHeader header = new ResponseHeader();
-        header.setQtime(System.currentTimeMillis() - qTime);
-        header.setShardsUsed(3);
+        ResponseHeader header = ResponseHeader
+                .builder()
+                .Qtime(System.currentTimeMillis() - qTime)
+                .shardsUsed(SHARDS)
+                .sorted(query.isSort()).build();
+
         response.setResultList(collect);
-        header.setSorted(query.isSort());
         response.setHeader(header);
         return response;
     }
 
-    private List<LookupResult> searchAsync(Query query) {
-        List<Future<List<LookupResult>>> lookupRes = new ArrayList<>();
-        String[] splitQuery = query.getToSearch().split(" ");
-        for (String s : splitQuery) {
-            final int distance = query.isFuzziness() ? getFuzziness(s) : query.getDistance();
-            for (Shard shard : shardList) {
-                lookupRes.add(executorService.submit(() -> shard.find(s, distance, query.getCount())));
+    private List<LookupResult> searchResults(Query query) {
+        final String[] splitQuery = query.getToSearch().split(" ");
+        int pos = 0, cutPos;
+        List<LookupResult> res = new ArrayList<>();
+        String curr = "", prev;
+        for (int i = pos; i < splitQuery.length; i++) {
+            prev = curr;
+            cutPos = prev.length();
+            curr += splitQuery[i];
+            List<LookupResult> results = searchAsync(curr, query.getCount(), query.getDistance(), query.isFuzziness());
+            if (results.isEmpty()) {
+                curr = curr.substring(cutPos);
+                prev = curr;
+                if (prev.isEmpty()) continue;
+                res.addAll(searchAsync(prev, query.getCount(), query.getDistance(), query.isFuzziness()));
+            } else {
+                res.addAll(results);
             }
+        }
+        return res;
+    }
+
+    private List<LookupResult> searchAsync(String query, int count, int distance, boolean fuzziness) {
+        List<Future<List<LookupResult>>> lookupRes = new ArrayList<>();
+        for (Shard shard : shardList) {
+            final int dist = fuzziness ? getFuzziness(query) : distance;
+            lookupRes.add(executorService.submit(() -> shard.find(query, dist, count)));
         }
         List<LookupResult> result = new ArrayList<>();
         Set<String> prev = new HashSet<>();

@@ -10,7 +10,7 @@ create table data
 drop table if exists search_config;
 create table search_config
 (
-    id         serial primary key,
-    param_name varchar(100),
-    param_val  varchar(100)
+    id       serial primary key,
+    name     varchar(100),
+    property varchar(100)
 );
