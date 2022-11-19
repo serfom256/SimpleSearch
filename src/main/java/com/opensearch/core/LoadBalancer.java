@@ -26,6 +26,23 @@ public class LoadBalancer {
         initShards();
     }
 
+    public SearchResponse suggest(final Query query){
+        long qTime = System.currentTimeMillis();
+        SearchResponse response = new SearchResponse();
+        List<LookupResult> result = searchService.lookupForResults(searchAsync(query.getToSearch(), query.getCount(), query.getDistance(), query.isFuzziness()));
+        if (query.isSort()) result.sort(Comparator.comparingInt(a -> distance(a.getKey(), query.getToSearch())));
+        List<LookupResult> collect = result.stream().limit(query.getCount()).collect(Collectors.toList());
+        ResponseHeader header = ResponseHeader
+                .builder()
+                .Qtime(System.currentTimeMillis() - qTime)
+                .shardsUsed(SHARDS)
+                .sorted(query.isSort()).build();
+
+        response.setResultList(collect);
+        response.setHeader(header);
+        return response;
+    }
+
     public SearchResponse search(final Query query) {
         long qTime = System.currentTimeMillis();
         SearchResponse response = new SearchResponse();

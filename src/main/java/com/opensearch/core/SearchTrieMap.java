@@ -198,6 +198,13 @@ public class SearchTrieMap {
         return result.getResult();
     }
 
+    public List<LookupResult> lookupForPrefix(String input, int distance, int count) {
+        checkSearchConstraints(input, distance);
+        SearchEntity result = new SearchEntity(count, distance, input, new ArrayList<>());
+        fuzzyLookup(root, 0, distance, result);
+        return result.getResult();
+    }
+
     private void fuzzyLookup(TNode start, int pos, int typos, SearchEntity entity) {
         if (typos < 0 || start == null || entity.isFounded()) return;
         if (start.isEnd && distance(getReversed(start), entity.toSearch) <= entity.typos) {

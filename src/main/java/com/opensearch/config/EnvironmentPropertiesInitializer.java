@@ -7,6 +7,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
@@ -15,7 +16,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @Log4j2
+@Profile("!test")
 @Configuration
 public class EnvironmentPropertiesInitializer implements BeanPostProcessor, InitializingBean, EnvironmentAware {
 
@@ -36,7 +39,7 @@ public class EnvironmentPropertiesInitializer implements BeanPostProcessor, Init
     @Override
     public void afterPropertiesSet() {
         logoPrinter.printLogo();
-        if (environment != null && !environment.getActiveProfiles()[0].equals("test")) {
+        if (environment != null) {
             final Map<String, Object> properties = new HashMap<>();
             jdbcTemplate.query(SELECT_ALL_CONFIG, rs -> {
                 String key = rs.getString("name");

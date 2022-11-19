@@ -23,6 +23,11 @@ public class Shard {
         return trieMap.lookup(query.toLowerCase(), distance, count);
     }
 
+    public List<LookupResult> findByPrefix(String query, int distance, int count) {
+        distance = Math.min(query.length() - 1, distance);
+        return trieMap.lookup(query.toLowerCase(), distance, count);
+    }
+
     public String getName() {
         return name;
     }

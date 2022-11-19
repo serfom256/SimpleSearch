@@ -6,7 +6,6 @@ import com.opensearch.entity.document.Document;
 import com.opensearch.entity.document.DocumentType;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -52,13 +51,4 @@ public class JsonReader implements Reader {
         }
         return "";
     }
-
-//    @PostConstruct
-//    public void main() {
-//        Map<String, List<Document>> read = new JsonReader().read(new File("C:\\Users\\User\\Downloads\\workflow.json"), new ArrayList<>());
-//        System.out.println(read);
-//        read.forEach((a, b) -> System.out.println(a + " " + b));
-//    }
-
-
 }
