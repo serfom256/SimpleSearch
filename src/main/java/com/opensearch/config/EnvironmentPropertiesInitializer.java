@@ -36,7 +36,7 @@ public class EnvironmentPropertiesInitializer implements BeanPostProcessor, Init
     @Override
     public void afterPropertiesSet() {
         logoPrinter.printLogo();
-        if (environment != null) {
+        if (environment != null && !environment.getActiveProfiles()[0].equals("test")) {
             final Map<String, Object> properties = new HashMap<>();
             jdbcTemplate.query(SELECT_ALL_CONFIG, rs -> {
                 String key = rs.getString("name");
