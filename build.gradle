@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.opensearch'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+//sourceCompatibility = "16"
 
 jar {
     manifest {
@@ -37,4 +37,5 @@ dependencies {
     implementation 'org.apache.pdfbox:pdfbox:2.0.27'
 }
 
+targetCompatibility = JavaVersion.VERSION_16
 

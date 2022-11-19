@@ -43,7 +43,12 @@ public class SearchController {
 
     @PostMapping("index")
     public IndexingResponse createIndexes(@RequestBody IndexingRequest document) {
+        try{
         return fileReadingService.read(document);
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @GetMapping("shards")
