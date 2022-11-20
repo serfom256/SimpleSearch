@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DocxReader implements Reader {
+public class DocxReader extends AbstractReader {
     @Override
     public Map<String, List<Document>> read(File file, List<Character> regex) {
         try {

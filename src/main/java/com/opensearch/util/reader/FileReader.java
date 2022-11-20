@@ -2,33 +2,26 @@ package com.opensearch.util.reader;
 
 
 import com.opensearch.entity.document.Document;
-import com.opensearch.entity.document.DocumentType;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 
-public class FileReader implements Reader {
+public class FileReader extends AbstractReader {
 
     @Override
     public Map<String, List<Document>> read(File file, List<Character> regex) {
         String fileContent;
         try {
             fileContent = Files.readString(file.toPath());
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return Collections.emptyMap();
         }
-        List<String> words = Arrays.asList(fileContent.split(" "));
-        Map<String, List<Document>> dict = new HashMap<>();
-        for (int i = 0; i < words.size(); i++) {
-            String str = words.get(i);
-            if (str.isEmpty()) continue;
-            List<Document> documents = dict.getOrDefault(str, new ArrayList<>());
-            documents.add(new Document(file.getAbsolutePath(), i, DocumentType.SIMPLE, null));
-            dict.put(str, documents);
-        }
-        return dict;
+        return parseText(fileContent, file, regex);
     }
 }
