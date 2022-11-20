@@ -12,12 +12,6 @@ import java.nio.file.ClosedFileSystemException;
 import java.util.*;
 
 public class PdfReader implements Reader {
-    public static void main(String[] args) {
-        PdfReader reder = new PdfReader();
-        File file = new File("C:\\Users\\Lenovo\\Desktop\\testPDF.pdf");
-        System.out.println(reder.read(file, null));
-    }
-
     @Override
     public Map<String, List<Document>> read(File file, List<Character> regex) {
         PDDocument document = null;
