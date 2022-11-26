@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
-@Profile("!test")
 @Configuration
 public class DatasourceConfig {
 

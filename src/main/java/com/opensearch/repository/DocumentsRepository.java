@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-@Profile("!test")
 @Repository
 public class DocumentsRepository implements MetadataRepository {
 

@@ -1,16 +1,18 @@
 package com.opensearch.core;
 
 
-import com.opensearch.entity.LookupResult;
-import com.opensearch.entity.TNode;
+import com.opensearch.entity.trie.TNode;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class SearchTrieMap {
+class TrieMap {
 
     private final TNode root;
     private final AtomicInteger pairs;
@@ -27,36 +29,7 @@ public class SearchTrieMap {
         }
     }
 
-    private static class SearchEntity {
-        private final int count;
-        private final int typos;
-        private final String toSearch;
-        private final List<LookupResult> founded;
-        private final Set<TNode> set;
-
-
-        public SearchEntity(int count, int typos, String toSearch, List<LookupResult> founded) {
-            this.count = count;
-            this.typos = typos;
-            this.toSearch = toSearch;
-            this.founded = founded;
-            set = new HashSet<>();
-        }
-
-        public int getSearchedLength() {
-            return toSearch.length();
-        }
-
-        public boolean isFounded() {
-            return count <= founded.size();
-        }
-
-        public List<LookupResult> getResult() {
-            return founded;
-        }
-    }
-
-    public SearchTrieMap() {
+    public TrieMap() {
         this.root = new TNode();
         this.rootNodes = new HashMap<>(128);
         this.pairs = new AtomicInteger();
@@ -184,85 +157,6 @@ public class SearchTrieMap {
         return node;
     }
 
-    private void checkSearchConstraints(String input, int distance) {
-        if (input == null) throw new IllegalArgumentException();
-        if (input.length() <= 1 || input.length() <= distance) {
-            throw new IllegalArgumentException("Input length must be more than specified distance");
-        }
-    }
-
-    public List<LookupResult> lookup(String input, int distance, int count) {
-        checkSearchConstraints(input, distance);
-        SearchEntity result = new SearchEntity(count, distance, input, new ArrayList<>());
-        fuzzyLookup(root, 0, distance, result);
-        return result.getResult();
-    }
-
-    public List<LookupResult> lookupForPrefix(String input, int distance, int count) {
-        checkSearchConstraints(input, distance);
-        SearchEntity result = new SearchEntity(count, distance, input, new ArrayList<>());
-        fuzzyLookup(root, 0, distance, result);
-        return result.getResult();
-    }
-
-    private void fuzzyLookup(TNode start, int pos, int typos, SearchEntity entity) {
-        if (typos < 0 || start == null || entity.isFounded()) return;
-        if (start.isEnd && distance(getReversed(start), entity.toSearch) <= entity.typos) {
-            collectForNode(entity, start);
-        }
-        if (start.successors == null) return;
-        for (TNode v : start.successors) {
-            if (pos < entity.getSearchedLength() && v.element == entity.toSearch.charAt(pos)) {
-                fuzzyLookup(v, pos + 1, typos, entity);
-            }
-            fuzzyLookup(v, pos + 1, typos - 1, entity);
-            fuzzyLookup(v, pos, typos - 1, entity);
-            fuzzyLookup(start, pos + 1, typos - 1, entity);
-            if (entity.isFounded()) return;
-        }
-    }
-
-    private void collectForNode(SearchEntity entity, TNode node) {
-        if (!node.isEnd || entity.set.contains(node)) return;
-        LookupResult lookupResult = new LookupResult();
-        lookupResult.setKey(getReversed(node));
-        lookupResult.setSerializedIds(node.serializedIds);
-        entity.founded.add(lookupResult);
-        entity.set.add(node);
-    }
-
-
-    private String getReversed(TNode node) {
-        StringBuilder prefix = new StringBuilder();
-        String temp = node.seq;
-        while (node != null) {
-            prefix.append(node.element);
-            node = node.prev;
-        }
-        prefix.reverse();
-        if (temp != null) prefix.append(temp);
-        return prefix.toString();
-    }
-
-    private static int distance(String s1, String s2) {
-        int len1 = s1.length(), len2 = s2.length();
-        int[][] dp = new int[len1 + 1][len2 + 1];
-        for (int i = 0; i <= len1; i++) {
-            for (int j = 0; j <= len2; j++) {
-                if (i == 0) {
-                    dp[i][j] = j;
-                } else if (j == 0) {
-                    dp[i][j] = i;
-                } else {
-                    int a = 0;
-                    if (s1.charAt(i - 1) != s2.charAt(j - 1)) ++a;
-                    dp[i][j] = Math.min(dp[i - 1][j - 1] + a, Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));
-                }
-            }
-        }
-        return dp[len1][len2];
-    }
-
     public int getSize() {
         return pairs.get();
     }
@@ -276,6 +170,10 @@ public class SearchTrieMap {
         }
     }
 
+    // todo add return root with root lock acquiring
+    public TNode getRootInstance() {
+        return root;
+    }
 
     /**
      * Helps to print all entries from the TrieMap
@@ -291,7 +189,7 @@ public class SearchTrieMap {
     }
 
     //    @Override
-    public String tostring() {
+    public String totring() {
         if (pairs.get() == 0) return "[]";
         StringBuilder s = new StringBuilder("[");
         toStringHelper(s, root);

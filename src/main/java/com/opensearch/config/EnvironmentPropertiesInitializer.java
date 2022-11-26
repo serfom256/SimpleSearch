@@ -18,7 +18,6 @@ import java.util.Map;
 
 
 @Log4j2
-@Profile("!test")
 @Configuration
 public class EnvironmentPropertiesInitializer implements BeanPostProcessor, InitializingBean, EnvironmentAware {
 

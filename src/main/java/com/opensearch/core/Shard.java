@@ -6,26 +6,24 @@ import java.util.List;
 
 public class Shard {
 
-    private final SearchTrieMap trieMap;
+    private final QueryService service;
     private final String name;
 
     public Shard(String name) {
         this.name = name;
-        trieMap = new SearchTrieMap();
+        service = new QueryService(new TrieMap());
     }
 
     public void save(String key, int metadataId) {
-        trieMap.add(key.toLowerCase(), metadataId);
+        service.save(key, metadataId);
     }
 
     public List<LookupResult> find(String query, int distance, int count) {
-        distance = Math.min(query.length() - 1, distance);
-        return trieMap.lookup(query.toLowerCase(), distance, count);
+        return service.find(query, distance, count);
     }
 
     public List<LookupResult> findByPrefix(String query, int distance, int count) {
-        distance = Math.min(query.length() - 1, distance);
-        return trieMap.lookup(query.toLowerCase(), distance, count);
+        return service.matchPrefix(query, distance, count);
     }
 
     public String getName() {
@@ -33,7 +31,7 @@ public class Shard {
     }
 
     public int getIndexedSize() {
-        return trieMap.getSize();
+        return service.getMapSize();
     }
 }
 

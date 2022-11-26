@@ -14,7 +14,6 @@ import java.util.concurrent.Executors;
 
 
 @Log4j2
-@Profile("!test")
 @Component
 public class DataRestorer {
 

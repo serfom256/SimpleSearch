@@ -1,4 +1,4 @@
-package com.opensearch.entity;
+package com.opensearch.entity.trie;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
