@@ -1,14 +1,18 @@
 package com.opensearch.core;
 
+import com.opensearch.config.Config;
 import com.opensearch.entity.*;
 import com.opensearch.entity.document.Document;
 import com.opensearch.service.SearchService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
+
+import static com.opensearch.config.GlobalConstants.SHARDS_USED;
 
 @Log4j2
 @Component
@@ -17,16 +21,18 @@ public class LoadBalancer {
     private final List<Shard> shardList;
     private final SearchService searchService;
     private final ExecutorService executorService;
-    private static final int SHARDS = 6;
+    private final int SHARDS;
 
-    public LoadBalancer(SearchService searchService) {
+    @Autowired
+    public LoadBalancer(SearchService searchService, Config config) {
         this.searchService = searchService;
+        SHARDS = Integer.parseInt(config.getProperty(SHARDS_USED.getValue()));
         shardList = new ArrayList<>(SHARDS);
         executorService = Executors.newFixedThreadPool(SHARDS);
         initShards();
     }
 
-    public SearchResponse suggest(final Query query){
+    public SearchResponse suggest(final Query query) {
         long qTime = System.currentTimeMillis();
         SearchResponse response = new SearchResponse();
         List<LookupResult> result = searchAsync(query.getToSearch(), query.getCount(), query.getDistance(), query.isFuzziness());

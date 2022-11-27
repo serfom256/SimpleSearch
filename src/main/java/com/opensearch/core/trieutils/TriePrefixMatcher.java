@@ -13,7 +13,7 @@ public class TriePrefixMatcher {
         return lookupForPrefix(input, distance, count, curr);
     }
 
-    public List<LookupResult> lookupForPrefix(String input, int distance, int count, TNode curr) {
+    private List<LookupResult> lookupForPrefix(String input, int distance, int count, TNode curr) {
         int len = input.length() - 1;
         SearchEntity searchEntity = new SearchEntity(count, distance, input, new ArrayList<>());
         for (int i = 0; i <= len; i++) {
