@@ -1,5 +1,6 @@
 package com.opensearch.core;
 
+import com.opensearch.common.chain.DefaultChainBuilder;
 import com.opensearch.config.Config;
 import com.opensearch.entity.*;
 import com.opensearch.entity.document.Document;
@@ -21,78 +22,58 @@ public class LoadBalancer {
     private final List<Shard> shardList;
     private final SearchService searchService;
     private final ExecutorService executorService;
-    private final int SHARDS;
+    private static final int DEFAULT_SHARDS = 6;
+    private final int shards;
+    private final DefaultChainBuilder builder;
 
     @Autowired
     public LoadBalancer(SearchService searchService, Config config) {
         this.searchService = searchService;
-        SHARDS = Integer.parseInt(config.getProperty(SHARDS_USED.getValue()));
-        shardList = new ArrayList<>(SHARDS);
-        executorService = Executors.newFixedThreadPool(SHARDS);
+        shards = Integer.parseInt(config.getProperty(SHARDS_USED.getValue(), String.valueOf(DEFAULT_SHARDS)));
+        shardList = new ArrayList<>(shards);
+        executorService = Executors.newFixedThreadPool(shards);
         initShards();
+        builder = new DefaultChainBuilder();
     }
 
     public SearchResponse suggest(final Query query) {
         long qTime = System.currentTimeMillis();
-        SearchResponse response = new SearchResponse();
-        List<LookupResult> result = searchAsync(query.getToSearch(), query.getCount(), query.getDistance(), query.isFuzziness());
-        if (query.isSort()) result.sort(Comparator.comparingInt(a -> distance(a.getKey(), query.getToSearch())));
-        List<LookupResult> collect = result.stream().limit(query.getCount()).collect(Collectors.toList());
-        ResponseHeader header = ResponseHeader
-                .builder()
-                .Qtime(System.currentTimeMillis() - qTime)
-                .shardsUsed(SHARDS)
-                .sorted(query.isSort()).build();
-
-        response.setResultList(collect);
-        response.setHeader(header);
-        return response;
+        List<LookupResult> results = suggestAsync(query);
+        return builder.getQueryChain(query, results, qTime, shards);
     }
 
     public SearchResponse search(final Query query) {
         long qTime = System.currentTimeMillis();
-        SearchResponse response = new SearchResponse();
-        List<LookupResult> result = searchService.lookupForResults(searchResults(query));
-        if (query.isSort()) result.sort(Comparator.comparingInt(a -> distance(a.getKey(), query.getToSearch())));
-        List<LookupResult> collect = result.stream().limit(query.getCount()).collect(Collectors.toList());
-        ResponseHeader header = ResponseHeader
-                .builder()
-                .Qtime(System.currentTimeMillis() - qTime)
-                .shardsUsed(SHARDS)
-                .sorted(query.isSort()).build();
-
-        response.setResultList(collect);
-        response.setHeader(header);
-        return response;
+        List<LookupResult> results = searchAsync(query);
+        return builder.getQueryChain(query, results, qTime, shards);
     }
 
-    private List<LookupResult> searchResults(Query query) {
-        final String[] splitQuery = query.getToSearch().split(" ");
-        int pos = 0, cutPos;
-        List<LookupResult> res = new ArrayList<>();
-        String curr = "", prev;
-        for (int i = pos; i < splitQuery.length; i++) {
-            prev = curr;
-            cutPos = prev.length();
-            curr += splitQuery[i];
-            List<LookupResult> results = searchAsync(curr, query.getCount(), query.getDistance(), query.isFuzziness());
-            if (results.isEmpty()) {
-                curr = curr.substring(cutPos);
-                prev = curr;
-                if (prev.isEmpty()) continue;
-                res.addAll(searchAsync(prev, query.getCount(), query.getDistance(), query.isFuzziness()));
-            } else {
-                res.addAll(results);
-            }
-        }
-        return res;
-    }
-
-    private List<LookupResult> searchAsync(String query, int count, int distance, boolean fuzziness) {
+    private List<LookupResult> searchAsync(Query query) {
         List<Future<List<LookupResult>>> lookupRes = new ArrayList<>();
         for (Shard shard : shardList) {
-            final int dist = fuzziness ? getFuzziness(query) : distance;
-            lookupRes.add(executorService.submit(() -> shard.find(query, dist, count)));
+            lookupRes.add(executorService.submit(() -> shard.find(query.getToSearch(), query.getDistance(), query.getCount())));
+        }
+        List<LookupResult> result = new ArrayList<>();
+        Set<String> prev = new HashSet<>();
+        for (var future : lookupRes) {
+            try {
+                List<LookupResult> lookupResults = future.get();
+                for (LookupResult r : lookupResults) {
+                    if (!prev.contains(r.getKey())) result.add(r);
+                    prev.add(r.getKey());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                Thread.currentThread().interrupt();
+            }
+        }
+        return result;
+    }
+
+    private List<LookupResult> suggestAsync(Query query) {
+        List<Future<List<LookupResult>>> lookupRes = new ArrayList<>();
+        for (Shard shard : shardList) {
+            lookupRes.add(executorService.submit(() -> shard.findByPrefix(query.getToSearch(), query.getDistance(), query.getCount())));
         }
         List<LookupResult> result = new ArrayList<>();
         Set<String> prev = new HashSet<>();
@@ -121,28 +102,9 @@ public class LoadBalancer {
     }
 
     private void initShards() {
-        for (int i = 0; i < SHARDS; i++) {
+        for (int i = 0; i < shards; i++) {
             shardList.add(new Shard("shard-" + i));
         }
-    }
-
-    private int distance(String s1, String s2) {
-        int len1 = s1.length(), len2 = s2.length();
-        int[][] dp = new int[len1 + 1][len2 + 1];
-        for (int i = 0; i <= len1; i++) {
-            for (int j = 0; j <= len2; j++) {
-                if (i == 0) {
-                    dp[i][j] = j;
-                } else if (j == 0) {
-                    dp[i][j] = i;
-                } else {
-                    int a = 0;
-                    if (s1.charAt(i - 1) != s2.charAt(j - 1)) ++a;
-                    dp[i][j] = Math.min(dp[i - 1][j - 1] + a, Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1));
-                }
-            }
-        }
-        return dp[len1][len2];
     }
 
     public void createIndex(Map<String, List<Document>> indexes) {

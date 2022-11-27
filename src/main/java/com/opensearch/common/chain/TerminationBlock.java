@@ -5,14 +5,14 @@ import com.opensearch.entity.Query;
 
 import java.util.List;
 
-public class GroupByBlock extends QueryChain{
+public class TerminationBlock extends QueryChain {
 
-    GroupByBlock(QueryChain nextBlock) {
+    TerminationBlock(QueryChain nextBlock) {
         super(nextBlock);
     }
 
     @Override
     public List<LookupResult> evaluate(List<LookupResult> resultList, Query query) {
-        return null;
+        return resultList;
     }
 }

@@ -4,15 +4,17 @@ import com.opensearch.entity.LookupResult;
 import com.opensearch.entity.Query;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class FilterBlock implements QueryChain{
-    @Override
-    public QueryChain evaluate(List<LookupResult> resultList, QueryChain next, Query query) {
-        return null;
+public class FilterBlock extends QueryChain {
+
+    FilterBlock(QueryChain nextBlock) {
+        super(nextBlock);
     }
 
     @Override
-    public List<LookupResult> getResult() {
-        return null;
+    public List<LookupResult>  evaluate(List<LookupResult> resultList, Query query) {
+        resultList = resultList.stream().limit(query.getCount()).collect(Collectors.toList());
+        return getNext().evaluate(resultList, query);
     }
 }

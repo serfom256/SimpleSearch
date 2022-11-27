@@ -27,7 +27,6 @@ public class FileReadingService {
         readerCommand = new ReaderCommand();
     }
 
-
     public IndexingResponse read(IndexingRequest document) {
         File dataDir = new File(document.getPath());
 
@@ -36,7 +35,17 @@ public class FileReadingService {
         File f = new File(document.getPath());
         long iTime = System.currentTimeMillis();
         if (f.isFile()) {
-            Map<String, List<Document>> read = readerCommand.getReaderByExtension(getFileExtension(f)).read(f, new ArrayList<>());
+            Map<String, List<Document>> read;
+            try {
+                read = readerCommand.getReaderByExtension(getFileExtension(f)).read(f, new ArrayList<>());
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (readerCommand.getReaderByExtension(getFileExtension(f)) == readerCommand.getDefaultReader()) {
+                    throw new IllegalStateException(String.format("Cannot read file: %s", f.getAbsolutePath()));
+                }
+                read = readerCommand.getDefaultReader().read(f, new ArrayList<>());
+            }
+
             setIndexed(indexingResponse, 1, read.size() + 1);
             balancer.createIndex(createPathIndex(f));
             balancer.createIndex(read);

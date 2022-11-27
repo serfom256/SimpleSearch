@@ -25,4 +25,8 @@ public class ReaderCommand {
         if (reader == null) reader = defaultReader;
         return reader;
     }
+
+    public Reader getDefaultReader() {
+        return defaultReader;
+    }
 }

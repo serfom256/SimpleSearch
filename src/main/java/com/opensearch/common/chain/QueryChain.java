@@ -5,9 +5,18 @@ import com.opensearch.entity.Query;
 
 import java.util.List;
 
-public interface QueryChain {
+public abstract class QueryChain {
 
-    QueryChain evaluate(List<LookupResult> resultList, QueryChain next, Query query);
+    private final QueryChain nextBlock;
 
-    List<LookupResult> getResult();
+    QueryChain(QueryChain nextBlock) {
+        this.nextBlock = nextBlock;
+    }
+
+    public QueryChain getNext() {
+        if (nextBlock == null) return new TerminationBlock(null);
+        return nextBlock;
+    }
+
+    public abstract List<LookupResult> evaluate(List<LookupResult> resultList, Query query);
 }

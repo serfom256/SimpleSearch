@@ -14,9 +14,11 @@ public class Config {
         this.environment = environment;
     }
 
-    public String getProperty(String key) {
+    public String getProperty(String key, String defaultProperty) {
         String property = environment.getProperty(key);
+
         if (property == null) {
+            if (defaultProperty != null) return defaultProperty;
             throw new IllegalStateException(String.format("Property %s not found", key));
         }
         return property;
