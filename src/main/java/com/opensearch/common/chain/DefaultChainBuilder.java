@@ -9,21 +9,30 @@ import java.util.List;
 
 public class DefaultChainBuilder {
 
-    public SearchResponse getQueryChain(Query query, List<LookupResult> resultList, long searchTime, int shards){
+    private final QueryChain initialBlock;
+
+    public DefaultChainBuilder() {
+        initialBlock = buildDefaultChain();
+    }
+
+    public SearchResponse executeQueryChain(Query query, List<LookupResult> resultList, long searchTime, int shards) {
         SearchResponse response = new SearchResponse();
-        SortBlock sortBlock = new SortBlock(null);
-        FilterBlock filterBlock = new FilterBlock(sortBlock);
-        List<LookupResult> evaluated = filterBlock.evaluate(resultList, query);
-
-
+        List<LookupResult> evaluated = initialBlock.evaluate(resultList, query);
         ResponseHeader header = ResponseHeader
                 .builder()
-                .Qtime(System.currentTimeMillis() -  searchTime)
+                .Qtime(System.currentTimeMillis() - searchTime)
                 .shardsUsed(shards)
                 .sorted(query.isSort()).build();
 
         response.setResultList(evaluated);
         response.setHeader(header);
         return response;
+    }
+
+
+    public QueryChain buildDefaultChain() {
+        FilterBlock filterBlock = new FilterBlock(null);
+        SortBlock sortBlock = new SortBlock(filterBlock);
+        return sortBlock;
     }
 }

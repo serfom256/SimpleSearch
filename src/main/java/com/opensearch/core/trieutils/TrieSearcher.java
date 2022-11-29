@@ -9,7 +9,10 @@ import java.util.List;
 public class TrieSearcher {
 
     public List<LookupResult> lookup(String input, int distance, int count, TNode root) {
+        // todo split input and lookup
+//        String [] inp = input.split(" ");
         TrieUtils.checkSearchConstraints(input, distance);
+        // todo add splitted input as SearchEntity field
         SearchEntity result = new SearchEntity(count, distance, input, new ArrayList<>());
         fuzzyLookup(root, 0, distance, result);
         return result.getResult();
@@ -19,6 +22,8 @@ public class TrieSearcher {
         if (typos < 0 || start == null || entity.isFounded()) return;
         if (start.isEnd && TrieUtils.distance(TrieUtils.getReversed(start), entity.getToSearch()) <= entity.getTypos()) {
             TrieUtils.collectForNode(entity, start);
+            // entity.toSearch + input[current pos + 1]
+            // todo check if current node has successors with fuzzyLookup
         }
         if (start.successors == null) return;
         for (TNode v : start.successors) {
