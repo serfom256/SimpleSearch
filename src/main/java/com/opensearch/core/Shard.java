@@ -22,7 +22,7 @@ public class Shard {
         return service.find(query, distance, count);
     }
 
-    public List<LookupResult> findByPrefix(String query, int distance, int count) {
+    public List<LookupResult> suggest(String query, int distance, int count) {
         return service.matchPrefix(query, distance, count);
     }
 

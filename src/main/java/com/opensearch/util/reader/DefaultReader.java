@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class FileReader extends AbstractReader {
+public class DefaultReader extends AbstractReader {
 
     @Override
     public Map<String, List<Document>> read(File file, List<Character> regex) {

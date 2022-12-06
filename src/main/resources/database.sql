@@ -5,7 +5,7 @@ create table data
     data blob,
     idx  varchar(1000)
 );
-
+create index id_idx  on data(id) using HASH;
 
 drop table if exists search_config;
 create table search_config
