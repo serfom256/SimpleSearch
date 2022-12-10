@@ -37,7 +37,7 @@ public class SearchController {
     @PostMapping("suggest")
     public CompletableFuture<SearchResponse> suggest(@RequestBody Query query) {
         log.debug(query);
-        return CompletableFuture.completedFuture(balancer.search(query));
+        return CompletableFuture.completedFuture(balancer.suggest(query));
     }
 
 

@@ -21,14 +21,12 @@ public class QueryService {
         trieMap.add(key.toLowerCase(), metadataId);
     }
 
-    public List<LookupResult> find(String query, int distance, int count) {
-        distance = Math.min(query.length() - 1, distance);
-        return  searcher.lookup(query.toLowerCase(), distance, count, trieMap.getRootInstance());
+    public List<LookupResult> find(String query, int distance, int count, boolean fuzziness) {
+        return searcher.lookup(query.toLowerCase(), distance, count, trieMap.getRootInstance(), fuzziness);
     }
 
     public List<LookupResult> matchPrefix(String query, int distance, int count) {
-        distance = Math.min(query.length() - 1, distance);
-        return prefixMatcher.matchPrefix(query.toLowerCase(), distance, count,trieMap.getRootInstance());
+        return prefixMatcher.matchPrefix(query.toLowerCase(), distance, count, trieMap.getRootInstance());
     }
 
     public int getMapSize() {

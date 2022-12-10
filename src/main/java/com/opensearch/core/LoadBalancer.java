@@ -29,8 +29,8 @@ public class LoadBalancer {
     private static final int DEFAULT_SHARDS = 6;
     private final int shards;
     private final DefaultChainBuilder builder;
-    private final BiFunction<Shard, Query, List<LookupResult>> findFunc = (shard, query) -> shard.find(query.getToSearch(), query.getDistance(), query.getCount());
-    private final BiFunction<Shard, Query, List<LookupResult>> suggestFunc = (shard, query) -> shard.suggest(query.getToSearch(), query.getDistance(), query.getCount());
+    private final BiFunction<Shard, Query, List<LookupResult>> findFunc = Shard::find;
+    private final BiFunction<Shard, Query, List<LookupResult>> suggestFunc = Shard::suggest;
 
     @Autowired
     public LoadBalancer(SearchService searchService, Config config) {
@@ -74,15 +74,6 @@ public class LoadBalancer {
             }
         }
         return result;
-    }
-
-    private int getFuzziness(String s) {
-        int fuzziness = 0;
-        for (int i = 1; i < s.length(); i += 3) {
-            fuzziness++;
-            i++;
-        }
-        return fuzziness;
     }
 
     private void initShards() {

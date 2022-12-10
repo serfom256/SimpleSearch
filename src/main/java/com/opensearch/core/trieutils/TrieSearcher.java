@@ -8,14 +8,16 @@ import java.util.List;
 
 public class TrieSearcher {
 
-    public List<LookupResult> lookup(String input, int distance, int count, TNode root) {
+    public List<LookupResult> lookup(String input, int distance, int count, TNode root, boolean fuzziness) {
         String[] indexes = input.split(" ");
         TrieUtils.checkSearchConstraints(input, distance);
         SearchEntity result = new SearchEntity(count, distance, indexes, new ArrayList<>());
         int attempts = indexes.length;
         while ((result.hasNextSequence() || result.getWordPos() == 0) && attempts >= 0) {
             int pPos = result.getWordPos();
-            fuzzyLookup(root, 0, distance, result);
+            int estimatedDistance = distance;
+            if (fuzziness) estimatedDistance = Math.min(TrieUtils.getFuzziness(result.getCurrent()), distance);
+            fuzzyLookup(root, 0, estimatedDistance, result);
             if (pPos == result.getWordPos()) result.setWordPos(result.getWordPos() + 1);
             if (result.hasNextSequence()) {
                 result.setCurrent(indexes[result.getWordPos() + 1]);

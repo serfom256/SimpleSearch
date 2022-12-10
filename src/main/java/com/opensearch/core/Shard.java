@@ -1,6 +1,7 @@
 package com.opensearch.core;
 
 import com.opensearch.entity.LookupResult;
+import com.opensearch.entity.Query;
 
 import java.util.List;
 
@@ -18,12 +19,12 @@ public class Shard {
         service.save(key, metadataId);
     }
 
-    public List<LookupResult> find(String query, int distance, int count) {
-        return service.find(query, distance, count);
+    public List<LookupResult> find(Query query) {
+        return service.find(query.getToSearch(), query.getDistance(), query.getCount(), query.isFuzziness());
     }
 
-    public List<LookupResult> suggest(String query, int distance, int count) {
-        return service.matchPrefix(query, distance, count);
+    public List<LookupResult> suggest(Query query) {
+        return service.matchPrefix(query.getToSearch(), query.getDistance(), query.getCount());
     }
 
     public String getName() {

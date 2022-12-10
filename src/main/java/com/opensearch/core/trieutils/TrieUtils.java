@@ -32,6 +32,7 @@ class TrieUtils {
             result.setSerializedIds(new ArrayList<>(node.serializedIds));
             entity.addEntry(result);
         }
+        if (node.successors == null) return;
         for (TNode curr : node.successors) {
             if (entity.isFounded()) return;
             prefix.append(curr.element);
@@ -58,6 +59,15 @@ class TrieUtils {
         if (input.length() <= 1 || input.length() <= distance) {
             throw new IllegalArgumentException("Input length must be more than specified distance");
         }
+    }
+
+    public static int getFuzziness(String s) {
+        int fuzziness = 0;
+        for (int i = 1; i < s.length(); i += 3) {
+            fuzziness++;
+            i++;
+        }
+        return fuzziness;
     }
 
     public static int distance(String s1, String s2) {
