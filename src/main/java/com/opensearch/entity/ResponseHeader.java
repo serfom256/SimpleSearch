@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseHeader {
-    @JsonProperty("Qtime")
-    private Long Qtime;
+    @JsonProperty(value = "Qtime")
+    private Long qTime;
     private Long normalizingTime;
     private boolean sorted;
+    private Integer founded;
     private Integer shardsUsed;
 }

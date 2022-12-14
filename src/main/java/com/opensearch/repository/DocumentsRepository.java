@@ -1,6 +1,7 @@
 package com.opensearch.repository;
 
 import com.opensearch.entity.document.Document;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -13,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+@Log4j2
 @Repository
 public class DocumentsRepository implements MetadataRepository {
 
@@ -40,7 +42,7 @@ public class DocumentsRepository implements MetadataRepository {
         return keyHolder.getKey().intValue();
     }
 
-    public Document deserialize(int id) {
+    public Document     deserialize(int id) {
         return jdbcTemplate.queryForObject(SELECT_METADATA_QUERY, (rs, rowNum) -> read(rs), id);
     }
 
@@ -62,6 +64,7 @@ public class DocumentsRepository implements MetadataRepository {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            log.warn(e.getMessage());
         }
         return null;
     }

@@ -20,8 +20,9 @@ public class DefaultChainBuilder {
         List<LookupResult> evaluated = initialBlock.evaluate(resultList, query);
         ResponseHeader header = ResponseHeader
                 .builder()
-                .Qtime(System.currentTimeMillis() - searchTime)
+                .qTime(System.currentTimeMillis() - searchTime)
                 .shardsUsed(shards)
+                .founded(evaluated.size())
                 .sorted(query.isSort()).build();
 
         response.setResultList(evaluated);
@@ -31,8 +32,8 @@ public class DefaultChainBuilder {
 
 
     public QueryChain buildDefaultChain() {
-        FilterBlock filterBlock = new FilterBlock(null);
-        SortBlock sortBlock = new SortBlock(filterBlock);
-        return sortBlock;
+        GroupByBlock groupBy = new GroupByBlock(null);
+        FilterBlock filter = new FilterBlock(groupBy);
+        return new SortBlock(filter);
     }
 }

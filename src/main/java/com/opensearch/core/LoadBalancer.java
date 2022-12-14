@@ -45,17 +45,15 @@ public class LoadBalancer {
     public SearchResponse suggest(final Query query) {
         long qTime = System.currentTimeMillis();
         List<LookupResult> results = searchAsync(suggestFunc, query);
-        SearchResponse searchResponse = builder.executeQueryChain(query, results, qTime, shards);
-        searchResponse.setResultList(searchService.lookupForResults(searchResponse.getResultList()));
-        return searchResponse;
+        List<LookupResult> withMetadata = searchService.lookupForResults(results);
+        return builder.executeQueryChain(query, withMetadata, qTime, shards);
     }
 
     public SearchResponse search(final Query query) {
         long qTime = System.currentTimeMillis();
         List<LookupResult> results = searchAsync(findFunc, query);
-        SearchResponse searchResponse = builder.executeQueryChain(query, results, qTime, shards);
-        searchResponse.setResultList(searchService.lookupForResults(searchResponse.getResultList()));
-        return searchResponse;
+        List<LookupResult> withMetadata = searchService.lookupForResults(results);
+        return builder.executeQueryChain(query, withMetadata, qTime, shards);
     }
 
     private List<LookupResult> searchAsync(BiFunction<Shard, Query, List<LookupResult>> findFunc, Query query) {

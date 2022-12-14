@@ -2,10 +2,11 @@ import requests, time
 
 url = 'http://localhost:8050/api/v1/search'
 payload = {
-    "toSearch": "request",
-    "count": 1,
+    "toSearch": "java",
+    "count": 100,
     "distance": 2,
-    "sort": True
+    "sort": True,
+    "fuzziness": True
 }
 start = time.time()
 for i in range(1000):
