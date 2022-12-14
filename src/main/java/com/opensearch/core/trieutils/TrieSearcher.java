@@ -13,14 +13,13 @@ public class TrieSearcher {
         TrieUtils.checkSearchConstraints(input, distance);
         SearchEntity result = new SearchEntity(count, distance, indexes, new ArrayList<>());
         int attempts = indexes.length;
-        while ((result.hasNextSequence() || result.getWordPos() == 0) && attempts >= 0) {
+        while (result.getWordPos() < indexes.length && attempts >= 0) {
             int pPos = result.getWordPos();
             int estimatedDistance = distance;
             if (fuzziness) estimatedDistance = Math.min(TrieUtils.getFuzziness(result.getCurrent()), distance);
             fuzzyLookup(root, 0, estimatedDistance, result);
-            if (pPos == result.getWordPos()) result.setWordPos(result.getWordPos() + 1);
-            if (result.hasNextSequence()) {
-                result.setCurrent(indexes[result.getWordPos() + 1]);
+            if (pPos == result.getWordPos() && result.hasNextSequence()) {
+                result.setCurrent(result.getNext());
             }
             attempts--;
         }
