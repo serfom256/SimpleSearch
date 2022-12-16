@@ -2,7 +2,7 @@ import requests, time
 
 url = 'http://localhost:8050/api/v1/search'
 payload = {
-    "toSearch": "java",
+    "toSearch": "search",
     "count": 100,
     "distance": 2,
     "sort": True,

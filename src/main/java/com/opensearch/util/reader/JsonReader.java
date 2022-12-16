@@ -21,7 +21,7 @@ public class JsonReader implements Reader {
     @Override
     public Map<String, List<Document>> read(File file, List<Character> regex) {
         JsonElement jsonElement = JsonParser.parseString(readJsonFile(file));
-        HashMap<String,  List<Document>> map = new HashMap<>();
+        HashMap<String, List<Document>> map = new HashMap<>();
         readJson(map, jsonElement, file.getAbsolutePath(), null);
         return map;
     }
@@ -36,10 +36,12 @@ public class JsonReader implements Reader {
                 readJson(map, element, path, key);
             }
         } else {
+            String val = obj.getAsString().strip();
+            if (val.length() == 0) return;
             Document document = new Document(path, null, DocumentType.JSON, null);
-            List<Document> list = map.getOrDefault(key, new ArrayList<>());
+            List<Document> list = map.getOrDefault(val, new ArrayList<>());
             list.add(document);
-            map.put(key, list);
+            map.put(val, list);
         }
     }
 

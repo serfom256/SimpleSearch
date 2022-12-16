@@ -12,7 +12,8 @@ import java.util.Set;
 public class SearchEntity {
     private final int count;
     @Getter
-    private final int typos;
+    @Setter
+    private int typos;
     private final String[] toSearch;
     @Getter
     @Setter

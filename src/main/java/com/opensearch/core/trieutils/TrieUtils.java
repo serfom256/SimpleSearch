@@ -63,9 +63,8 @@ class TrieUtils {
 
     public static int getFuzziness(String s) {
         int fuzziness = 0;
-        for (int i = 1; i < s.length(); i += 3) {
+        for (int i = 1; i < s.length(); i *= 2 + 2) {
             fuzziness++;
-            i++;
         }
         return fuzziness;
     }

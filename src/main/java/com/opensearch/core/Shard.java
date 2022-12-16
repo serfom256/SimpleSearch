@@ -20,7 +20,8 @@ public class Shard {
     }
 
     public List<LookupResult> find(Query query) {
-        return service.find(query.getToSearch(), query.getDistance(), query.getCount(), query.isFuzziness());
+        int distance = query.getDistance() == null ? query.getToSearch().length() : query.getDistance();
+        return service.find(query.getToSearch(), distance, query.getCount(), query.isFuzziness());
     }
 
     public List<LookupResult> suggest(Query query) {
