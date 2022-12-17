@@ -35,7 +35,7 @@ public class FileReadingService {
         Map<String, List<Document>> total = new HashMap<>();
         try {
             File path = new File(document.getPath());
-            if (document.getFilesType().contains(getFileExtension(path)) && path.isFile()) {
+            if (path.isFile()) {
                 readFile(path, indexingResponse, new ArrayList<>(document.getSeparators()), total);
             }
             indexFilesRecursively(path, indexingResponse, document.getFilesType(), new ArrayList<>(document.getSeparators()), total);
