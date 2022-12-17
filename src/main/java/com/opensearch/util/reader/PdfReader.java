@@ -1,6 +1,7 @@
 package com.opensearch.util.reader;
 
 import com.opensearch.entity.document.Document;
+import com.opensearch.entity.document.DocumentType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.EncryptedDocumentException;
@@ -14,7 +15,7 @@ public class PdfReader extends AbstractReader {
 
     @Override
     public Map<String, List<Document>> read(File file, List<Character> regex) {
-        return parseText(readPdf(file), file, regex);
+        return parseText(readPdf(file), file, regex, DocumentType.PDF);
     }
 
     private String readPdf(File file) {

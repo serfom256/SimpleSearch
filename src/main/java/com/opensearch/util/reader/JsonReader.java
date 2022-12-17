@@ -38,7 +38,7 @@ public class JsonReader implements Reader {
         } else {
             String val = obj.getAsString().strip();
             if (val.length() == 0) return;
-            Document document = new Document(path, null, DocumentType.JSON, null);
+            Document document = new Document(path, null, DocumentType.JSON, key);
             List<Document> list = map.getOrDefault(val, new ArrayList<>());
             list.add(document);
             map.put(val, list);

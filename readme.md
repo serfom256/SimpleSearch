@@ -1,9 +1,8 @@
 # Opensearch
 
----
+### Opensearch is in memory search engine based on trie data structure
 
-# Opensearch is in memory search engine based on trie data structure
-
+It provides lightning-fast search and suggestion on datasets that contains about 1 million entries
 ---
 
 ## Features:

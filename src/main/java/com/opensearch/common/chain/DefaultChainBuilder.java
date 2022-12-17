@@ -32,8 +32,8 @@ public class DefaultChainBuilder {
 
 
     public QueryChain buildDefaultChain() {
-        GroupByBlock groupBy = new GroupByBlock(null);
-        FilterBlock filter = new FilterBlock(groupBy);
+//        GroupByBlock groupBy = new GroupByBlock(null);
+        FilterBlock filter = new FilterBlock(null);
         return new SortBlock(filter);
     }
 }

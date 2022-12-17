@@ -14,7 +14,7 @@ public class TriePrefixMatcher {
         int estimatedDistance = Math.min(distance, fuzziness);
         return lookupForPrefix(input, estimatedDistance, count, curr);
     }
-
+    // fixme
     private List<LookupResult> lookupForPrefix(String input, int distance, int count, TNode curr) {
         int len = input.length() - 1;
         SearchEntity searchEntity = new SearchEntity(count, distance, new String[]{input}, new ArrayList<>());

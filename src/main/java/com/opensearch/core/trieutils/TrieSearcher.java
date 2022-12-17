@@ -15,7 +15,7 @@ public class TrieSearcher {
         while (result.getWordPos() < indexes.length && attempts >= 0) {
             int pPos = result.getWordPos();
             int estimatedDistance = distance;
-            if (fuzziness || distance >= result.getCurrent().length() / 2) {
+            if (fuzziness) {
                 estimatedDistance = Math.min(TrieUtils.getFuzziness(result.getCurrent()), distance);
             }
             result.setTypos(estimatedDistance);

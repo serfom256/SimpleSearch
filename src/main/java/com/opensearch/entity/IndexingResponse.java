@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class IndexingResponse {
     private long indexingTime;
     private int documentsIndexed;
-    private int entitiesIndexed;
+    private long entitiesIndexed;
 }

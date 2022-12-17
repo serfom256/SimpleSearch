@@ -3,9 +3,11 @@ package com.opensearch.core;
 import com.opensearch.core.trieutils.TriePrefixMatcher;
 import com.opensearch.core.trieutils.TrieSearcher;
 import com.opensearch.entity.LookupResult;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 
+@Log4j2
 public class QueryService {
     private final TrieMap trieMap;
     private final TrieSearcher searcher;
@@ -18,6 +20,10 @@ public class QueryService {
     }
 
     public void save(String key, int metadataId) {
+        if (key.length() == 0) {
+            log.warn("Skipping key with length 0");
+            return;
+        }
         trieMap.add(key.toLowerCase(), metadataId);
     }
 

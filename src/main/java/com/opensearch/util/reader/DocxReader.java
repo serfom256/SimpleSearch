@@ -1,6 +1,7 @@
 package com.opensearch.util.reader;
 
 import com.opensearch.entity.document.Document;
+import com.opensearch.entity.document.DocumentType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 
@@ -14,7 +15,7 @@ public class DocxReader extends AbstractReader {
 
     @Override
     public Map<String, List<Document>> read(File file, List<Character> regex) {
-        return parseText(readDocx(file), file, regex);
+        return parseText(readDocx(file), file, regex, DocumentType.DOCX);
     }
 
     private String readDocx(File file) {

@@ -10,6 +10,6 @@ import java.util.List;
 public class LookupResult {
     private String key;
     @JsonIgnore
-    private List<Integer> serializedIds;
-    private Document metadata;
+    private List<Integer> serializedIds; // todo create lookupResult dto
+    private List<Document> metadata;
 }

@@ -1,4 +1,3 @@
 add query execution plan chain
-implement words suggestion
-improve indexing speed by dividing result map on partitions and filling the trie concurrently
-fix data restoring from database
+fix words suggestion
+implement indexing sessions with metadata(indexing session creates on indexing request)

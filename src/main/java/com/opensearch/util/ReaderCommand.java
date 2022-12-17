@@ -15,18 +15,17 @@ public class ReaderCommand {
     public ReaderCommand() {
         readers = new HashMap<>();
         readers.put("docx", new DocxReader());
+        readers.put("doc", new DocxReader());
         readers.put("pdf", new PdfReader());
         readers.put("json", new JsonReader());
+        readers.put("", new PathReader());
+        readers.put(null, new DefaultReader());
         defaultReader = new DefaultReader();
     }
 
     public Reader getReaderByExtension(String fileExtension) {
         Reader reader = readers.get(fileExtension);
-        if (reader == null) reader = defaultReader;
+        if (reader == null) return defaultReader;
         return reader;
-    }
-
-    public Reader getDefaultReader() {
-        return defaultReader;
     }
 }

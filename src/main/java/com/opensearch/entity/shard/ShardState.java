@@ -1,4 +1,4 @@
-package com.opensearch.entity;
+package com.opensearch.entity.shard;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

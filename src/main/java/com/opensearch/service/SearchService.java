@@ -6,6 +6,7 @@ import com.opensearch.repository.MetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,7 +25,8 @@ public class SearchService {
 
     public List<LookupResult> lookupForResults(List<LookupResult> results) {
         for (LookupResult res : results) {
-            res.getSerializedIds().forEach(id -> res.setMetadata(repository.deserialize(id)));
+            res.setMetadata(new ArrayList<>());
+            res.getSerializedIds().forEach(id -> res.getMetadata().add(repository.deserialize(id)));
         }
         return results;
     }

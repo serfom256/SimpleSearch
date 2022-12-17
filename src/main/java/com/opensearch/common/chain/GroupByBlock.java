@@ -2,6 +2,7 @@ package com.opensearch.common.chain;
 
 import com.opensearch.entity.LookupResult;
 import com.opensearch.entity.Query;
+import com.opensearch.entity.document.Document;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -15,11 +16,12 @@ public class GroupByBlock extends QueryChain {
     }
 
     @Override
-    public List<LookupResult> evaluate(List<LookupResult> resultList, Query query) {
+    public List<LookupResult> evaluate(List<LookupResult> resultList, Query query) { // fixme fix grouping algorithm with LookupResponseDto
         Map<String, List<LookupResult>> grouped = new LinkedHashMap<>();
         for (LookupResult res : resultList) {
-            String document = res.getMetadata().getPath();
-            grouped.computeIfAbsent(document, k -> new ArrayList<>()).add(res);
+            for (Document document : res.getMetadata()) {
+                grouped.computeIfAbsent(document.getPath(), k -> new ArrayList<>()).add(res);
+            }
         }
         List<LookupResult> groupedResults = new ArrayList<>(grouped.size() + 1);
         grouped.forEach((k, v) -> {

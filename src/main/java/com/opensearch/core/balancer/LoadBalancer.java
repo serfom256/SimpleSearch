@@ -1,19 +1,25 @@
-package com.opensearch.core;
+package com.opensearch.core.balancer;
 
+import com.opensearch.common.DataIndexer;
 import com.opensearch.common.chain.DefaultChainBuilder;
 import com.opensearch.config.Config;
+import com.opensearch.core.Shard;
 import com.opensearch.entity.LookupResult;
 import com.opensearch.entity.Query;
 import com.opensearch.entity.SearchResponse;
-import com.opensearch.entity.ShardState;
 import com.opensearch.entity.document.Document;
+import com.opensearch.entity.shard.ShardInfoHeader;
+import com.opensearch.entity.shard.ShardState;
 import com.opensearch.service.SearchService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -26,6 +32,7 @@ public class LoadBalancer {
     private final List<Shard> shardList;
     private final SearchService searchService;
     private final ExecutorService executorService;
+    private final DataIndexer dataIndexer;
     private static final int DEFAULT_SHARDS = 6;
     private final int shards;
     private final DefaultChainBuilder builder;
@@ -33,8 +40,9 @@ public class LoadBalancer {
     private final BiFunction<Shard, Query, List<LookupResult>> suggestFunc = Shard::suggest;
 
     @Autowired
-    public LoadBalancer(SearchService searchService, Config config) {
+    public LoadBalancer(SearchService searchService, DataIndexer dataIndexer, Config config) {
         this.searchService = searchService;
+        this.dataIndexer = dataIndexer;
         shards = Integer.parseInt(config.getProperty(SHARDS_USED.getValue(), String.valueOf(DEFAULT_SHARDS)));
         shardList = new ArrayList<>(shards);
         executorService = Executors.newFixedThreadPool(shards);
@@ -84,44 +92,26 @@ public class LoadBalancer {
         }
     }
 
-    public void createIndex(Map<String, List<Document>> indexes) {
-        executorService.submit(() -> {
-            try {
-                makeIndex(indexes);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+    public void createIndexesForCollection(Map<String, List<Document>> indexes) {
+        dataIndexer.makeIndexesFor(shardList, indexes, 32);// todo set threads count
     }
 
-    public void saveSingleIndex(String idx, int docId) {
-        shardList.get(getShardIdx() % shardList.size()).save(idx, docId);
+    public void createSingleIndex(String idx, int docId, int shardId) {
+        shardList.get(shardId).save(idx, docId);
     }
 
-    public List<ShardState> getShardsState() {
-        return shardList.stream().map(s -> new ShardState(s.getName(), s.getIndexedSize())).collect(Collectors.toList());
+    public ShardInfoHeader getShardsState() {
+        ShardInfoHeader shardInfoHeader = new ShardInfoHeader();
+        shardInfoHeader.setShardsInfo(shardList.stream().map(s -> new ShardState(s.getName(), s.getIndexedSize())).collect(Collectors.toList()));
+        shardInfoHeader.setCpu(Runtime.getRuntime().availableProcessors() + "");
+        shardInfoHeader.setMemory(((int) getMemoryUsed()) + "mb");
+        shardInfoHeader.setThreads(Thread.activeCount());
+        return shardInfoHeader;
     }
 
-    private void makeIndex(Map<String, List<Document>> indexes) {
-        int i = 0;
-        for (Map.Entry<String, List<Document>> e : indexes.entrySet()) {
-            for (Document md : e.getValue()) {
-                shardList.get(++i % shardList.size()).save(e.getKey(), searchService.serialize(e.getKey(), md));
-            }
-        }
-        shardList.forEach(shard -> log.info("Shard: " + shard.getName() + " indexed values: " + shard.getIndexedSize()));
-        printUsedMemory();
-    }
-
-    private int getShardIdx() {
-        return ThreadLocalRandom.current().nextInt(0, shardList.size() + 1);
-    }
-
-    private void printUsedMemory() {
-        int mb = 1024 * 1024;
+    private float getMemoryUsed() {
+        float mb = 1024 * 1024;
         Runtime instance = Runtime.getRuntime();
-        log.info("Used Memory: " + (instance.totalMemory() - instance.freeMemory()) / mb);
+        return (instance.totalMemory() - instance.freeMemory()) / mb;
     }
-
-
 }

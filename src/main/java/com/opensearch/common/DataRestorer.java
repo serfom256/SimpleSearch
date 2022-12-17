@@ -1,16 +1,20 @@
 package com.opensearch.common;
 
-import com.opensearch.core.LoadBalancer;
+import com.opensearch.config.Config;
+import com.opensearch.core.balancer.LoadBalancer;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import static com.opensearch.config.GlobalConstants.SHARDS_USED;
 
 
 @Log4j2
@@ -20,15 +24,15 @@ public class DataRestorer {
     private final LoadBalancer balancer;
     private final Environment env;
     private final JdbcTemplate template;
-    private final ExecutorService executorService;
+    private final int shardsCount;
     private static final String SELECT_ALL_QUERY = "SELECT * from data";
 
     @Autowired
-    public DataRestorer(LoadBalancer balancer, Environment env, JdbcTemplate template) {
+    public DataRestorer(LoadBalancer balancer, Environment env, JdbcTemplate template, Config config) {
         this.balancer = balancer;
         this.env = env;
         this.template = template;
-        executorService = Executors.newSingleThreadExecutor();
+        this.shardsCount = Integer.parseInt(config.getProperty(SHARDS_USED.getValue(), null));
     }
 
     @PostConstruct
@@ -36,11 +40,19 @@ public class DataRestorer {
         if (Boolean.FALSE.equals(Boolean.valueOf(env.getProperty("opensearch.restore.data")))) {
             return;
         }
-        log.info("Restoring previous data");
-        executorService.execute(() -> template.query(SELECT_ALL_QUERY, rs -> {
-            balancer.saveSingleIndex(rs.getString("idx"), rs.getInt("id"));
-            if (rs.isFirst()) log.info("Data from database restored");
-        }));
+        new Thread(() -> template.query(SELECT_ALL_QUERY, new ResultSetExtractor<>() {
+            int position = 0;
 
+            @Override
+            public Object extractData(ResultSet rs) throws SQLException, DataAccessException {
+                log.info("Restoring previous data");
+                while (rs.next()) {
+                    balancer.createSingleIndex(rs.getString("idx"), rs.getInt("id"), ++position % shardsCount);
+                }
+                log.info("Data from database restored");
+                Thread.currentThread().interrupt();
+                return null;
+            }
+        })).start();
     }
 }
