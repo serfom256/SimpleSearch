@@ -70,13 +70,18 @@ public class LoadBalancer {
             lookupRes.add(executorService.submit(() -> findFunc.apply(shard, query)));
         }
         List<LookupResult> result = new ArrayList<>();
-        Set<String> prev = new HashSet<>();
+        Map<String, Integer> prev = new HashMap<>();
         for (var future : lookupRes) {
             try {
                 List<LookupResult> lookupResults = future.get();
                 for (LookupResult r : lookupResults) {
-                    if (!prev.contains(r.getKey())) result.add(r);
-                    prev.add(r.getKey());
+                    Integer key = prev.get(r.getKey());
+                    if (key == null) {
+                        prev.put(r.getKey(), result.size());
+                        result.add(r);
+                    } else {
+                        result.get(key).getSerializedIds().addAll(r.getSerializedIds());
+                    }
                 }
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
@@ -103,6 +108,7 @@ public class LoadBalancer {
     public ShardInfoHeader getShardsState() {
         ShardInfoHeader shardInfoHeader = new ShardInfoHeader();
         shardInfoHeader.setShardsInfo(shardList.stream().map(s -> new ShardState(s.getName(), s.getIndexedSize())).collect(Collectors.toList()));
+        shardInfoHeader.setIndexedTotal(shardList.stream().mapToInt(Shard::getIndexedSize).sum());
         shardInfoHeader.setCpu(Runtime.getRuntime().availableProcessors() + "");
         shardInfoHeader.setMemory(((int) getMemoryUsed()) + "mb");
         shardInfoHeader.setThreads(Thread.activeCount());

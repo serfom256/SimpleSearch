@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShardInfoHeader {
+    private Integer indexedTotal;
     private String cpu;
     private int threads;
     private String memory;
