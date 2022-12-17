@@ -14,7 +14,7 @@ class TrieUtils {
         if (!node.isEnd || entity.hasNode(node)) return;
         LookupResult lookupResult = new LookupResult();
         lookupResult.setKey(getReversed(node));
-        lookupResult.setSerializedIds(node.serializedIds);
+        lookupResult.setSerializedIds(new ArrayList<>(node.serializedIds));
         entity.addEntry(lookupResult);
         entity.memorize(node);
     }

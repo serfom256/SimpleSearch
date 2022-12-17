@@ -98,7 +98,7 @@ public class LoadBalancer {
     }
 
     public void createIndexesForCollection(Map<String, List<Document>> indexes) {
-        dataIndexer.makeIndexesFor(shardList, indexes, 32);// todo set threads count
+        dataIndexer.makeIndexesFor(shardList, indexes, 10);// todo set threads count
     }
 
     public void createSingleIndex(String idx, int docId, int shardId) {
