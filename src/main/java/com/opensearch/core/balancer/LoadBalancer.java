@@ -3,11 +3,14 @@ package com.opensearch.core.balancer;
 import com.opensearch.common.DataIndexer;
 import com.opensearch.common.chain.DefaultChainBuilder;
 import com.opensearch.config.Config;
+import com.opensearch.core.SessionContext;
 import com.opensearch.core.Shard;
 import com.opensearch.entity.LookupResult;
 import com.opensearch.entity.Query;
 import com.opensearch.entity.SearchResponse;
 import com.opensearch.entity.document.Document;
+import com.opensearch.entity.session.SessionInfo;
+import com.opensearch.entity.session.SessionStatus;
 import com.opensearch.entity.shard.ShardInfoHeader;
 import com.opensearch.entity.shard.ShardState;
 import com.opensearch.service.SearchService;
@@ -38,9 +41,10 @@ public class LoadBalancer {
     private final DefaultChainBuilder builder;
     private final BiFunction<Shard, Query, List<LookupResult>> findFunc = Shard::find;
     private final BiFunction<Shard, Query, List<LookupResult>> suggestFunc = Shard::suggest;
+    private final SessionContext sessionContext;
 
     @Autowired
-    public LoadBalancer(SearchService searchService, DataIndexer dataIndexer, Config config) {
+    public LoadBalancer(SearchService searchService, DataIndexer dataIndexer, Config config, SessionContext sessionContext) {
         this.searchService = searchService;
         this.dataIndexer = dataIndexer;
         shards = Integer.parseInt(config.getProperty(SHARDS_USED.getValue(), String.valueOf(DEFAULT_SHARDS)));
@@ -48,6 +52,7 @@ public class LoadBalancer {
         executorService = Executors.newFixedThreadPool(shards);
         initShards();
         builder = new DefaultChainBuilder();
+        this.sessionContext = sessionContext;
     }
 
     public SearchResponse suggest(final Query query) {
@@ -97,8 +102,15 @@ public class LoadBalancer {
         }
     }
 
-    public void createIndexesForCollection(Map<String, List<Document>> indexes) {
-        dataIndexer.makeIndexesFor(shardList, indexes, 10);// todo set threads count
+    private SessionInfo createSession(int total){
+        return new SessionInfo(UUID.randomUUID().toString(), SessionStatus.IN_PROGRESS,new Date(), 0, total);
+    }
+
+    public SessionInfo createIndexesForCollection(Map<String, List<Document>> indexes) {
+        SessionInfo newSession = createSession(indexes.size());
+        sessionContext.addSession(newSession.getSessionUUID(), newSession);
+        dataIndexer.makeIndexesFor(shardList, indexes, 10, newSession);// todo set threads count
+        return newSession;
     }
 
     public void createSingleIndex(String idx, int docId, int shardId) {

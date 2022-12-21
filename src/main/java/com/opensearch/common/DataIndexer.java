@@ -2,6 +2,7 @@ package com.opensearch.common;
 
 import com.opensearch.core.Shard;
 import com.opensearch.entity.document.Document;
+import com.opensearch.entity.session.SessionInfo;
 import com.opensearch.service.SearchService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class DataIndexer {
         this.searchService = searchService;
     }
 
-    private void makeIndexesAsync(Map<String, List<Document>> indexes, List<Shard> shards) {
+    private void makeIndexesAsync(Map<String, List<Document>> indexes, List<Shard> shards, SessionInfo sessionInfo) {
         int i = 0;
         for (Map.Entry<String, List<Document>> e : indexes.entrySet()) {
             for (Document md : e.getValue()) {
@@ -38,21 +39,24 @@ public class DataIndexer {
         }
     }
 
-    public void makeIndexesFor(List<Shard> shards, Map<String, List<Document>> indexes, int threads) {
+    public void makeIndexesFor(List<Shard> shards, Map<String, List<Document>> indexes, int threads,
+                               SessionInfo sessionInfo) {
         executorService.submit(() -> {
             try {
                 if (indexes.size() < DATA_SIZE_THRESHOLD) {
-                    makeIndexesAsync(indexes, shards);
+                    makeIndexesAsync(indexes, shards, sessionInfo);
                 } else {
-                    makeIndexes(shards, indexes, threads);
+                    makeIndexes(shards, indexes, threads, sessionInfo);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+//  Todo update session status and remove session
         });
     }
 
-    private void makeIndexes(List<Shard> shards, Map<String, List<Document>> indexes, int threads) {
+    private void makeIndexes(List<Shard> shards, Map<String, List<Document>> indexes, int threads,
+                             SessionInfo sessionInfo) {
         List<Thread> threadList = new ArrayList<>(threads);
         List<Map.Entry<String, List<Document>>> entries = new ArrayList<>(indexes.entrySet());
         int start = 0, gap = indexes.size() / threads;
@@ -102,6 +106,7 @@ public class DataIndexer {
             for (int j = start; j < end; j++) {
                 Map.Entry<String, List<Document>> entry = indexes.get(j);
                 for (Document md : entry.getValue()) {
+
                     shardList.get(++i % shardList.size()).save(entry.getKey(), searchService.serialize(entry.getKey(), md));
                 }
             }

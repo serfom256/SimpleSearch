@@ -42,7 +42,7 @@ public class DocumentsRepository implements MetadataRepository {
         return keyHolder.getKey().intValue();
     }
 
-    public Document     deserialize(int id) {
+    public Document deserialize(int id) {
         return jdbcTemplate.queryForObject(SELECT_METADATA_QUERY, (rs, rowNum) -> read(rs), id);
     }
 
