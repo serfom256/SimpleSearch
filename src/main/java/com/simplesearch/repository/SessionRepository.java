@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 @Repository
 @Transactional(rollbackFor = Exception.class)
 public class SessionRepository {
@@ -25,16 +27,18 @@ public class SessionRepository {
         return jdbcTemplate.queryForObject(GET_SESSION_QUERY, (rs, rowNum) ->
                 new IndexingSession(rs.getString("uuid"),
                         SessionStatus.valueOf(rs.getString("status")),
-                        new java.util.Date(rs.getTime("create_time").getTime()),
+                        new Date(rs.getTimestamp("create_time").getTime()),
                         rs.getInt("indexed"), rs.getInt("total")), uuid);
     }
 
     public void saveSession(IndexingSession indexingSession) {
-        jdbcTemplate.update(SAVE_SESSION_QUERY, indexingSession.getId(), indexingSession.getStatus().name(), indexingSession.getStartTime(), indexingSession.getTotal(), indexingSession.getIndexed());
+        jdbcTemplate.update(SAVE_SESSION_QUERY, indexingSession.getId(), indexingSession.getStatus().name(),
+                indexingSession.getStartTime(),
+                indexingSession.getTotal(), indexingSession.getIndexed());
     }
 
     public void updateSession(IndexingSession indexingSession) {
-        jdbcTemplate.update(UPDATE_SESSION_QUERY, indexingSession.getStatus(), indexingSession.getIndexed(), indexingSession);
+        jdbcTemplate.update(UPDATE_SESSION_QUERY, indexingSession.getStatus().name(), indexingSession.getIndexed(), indexingSession.getId());
     }
 
 }

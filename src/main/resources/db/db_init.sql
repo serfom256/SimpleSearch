@@ -17,7 +17,7 @@ create table if not exists session
     status      varchar(20),
     total       int,
     indexed     int,
-    create_time time
+    create_time timestamp
 );
 
 insert into search_config
