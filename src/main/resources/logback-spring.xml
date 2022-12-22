@@ -14,7 +14,7 @@
         <appender-ref ref="Console" />
     </root>
 
-    <logger name="com.opensearch" level="trace" additivity="false">
+    <logger name="com.simplesearch" level="trace" additivity="false">
         <appender-ref ref="Console" />
     </logger>
 

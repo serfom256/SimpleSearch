@@ -4,12 +4,12 @@ plugins {
     id 'java'
 }
 
-group = 'com.opensearch'
-version = '0.0.1-SNAPSHOT'
+group = 'com.simplesearch'
+version = '0.35.5-beta'
 
 jar {
     manifest {
-        attributes 'Main-Class': 'com.opensearch.OpensearchApplication'
+        attributes 'Main-Class': 'com.simplesearch.SimpleSearchApplication'
     }
 }
 
@@ -35,4 +35,3 @@ dependencies {
     implementation 'org.apache.poi:poi-ooxml:5.2.3'
     implementation 'org.apache.pdfbox:pdfbox:2.0.27'
 }
-
