@@ -62,7 +62,7 @@ The average time spent on queries is approximately 70ms for 1 million words data
 
 
 <h4 align="center">
-    Fuzzy Lookup for word with fuzzy distance 2
+    Fuzzy Lookup for word with fuzzy distance 3
 </h4>
 
 ![Fuzzy Lookup for word with fuzzy distance 3](benchmarks/3.png)
