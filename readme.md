@@ -18,7 +18,7 @@ It provides lightning-fast search and suggestion on datasets that contains about
 All benchmarks performed on a pc with 8cores/16threads 4.3 Ghz CPU and 32gb of RAM. For benchmarks was used dataset
 containing 1 Million random generated words containing ascii characters
 <br>
-Indexed dataset took approximately 850mb of RAM
+Indexed dataset took approximately 850mb of RAM for one shard(trie data structure)
 <br>
 Was used OpenJdk14
 <br>
@@ -26,8 +26,6 @@ As load testing tool was used Apache JMeter
 <br>
 
 The average time spent on queries is approximately 70ms for 1 million words dataset
-
-<h3>Was used 1 shard (trie data structure) </h3>
 
 ```
 {

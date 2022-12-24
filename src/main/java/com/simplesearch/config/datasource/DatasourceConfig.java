@@ -1,4 +1,4 @@
-package com.simplesearch.config;
+package com.simplesearch.config.datasource;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
