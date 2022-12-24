@@ -35,9 +35,9 @@ public class AsyncQueryExecutor {
     @Autowired
     public AsyncQueryExecutor(ShardList shardList, SearchService searchService) {
         this.shardList = shardList;
-        executorService = Executors.newFixedThreadPool(shardList.getShards().size());
+        this.executorService = Executors.newFixedThreadPool(24);
         this.searchService = searchService;
-        builder = new DefaultChainBuilder();
+        this.builder = new DefaultChainBuilder();
     }
 
     public SearchResponse suggest(final Query query) {

@@ -109,7 +109,8 @@ public class TrieMap {
         char c = seq.charAt(0);
         TNode curr = new TNode(c, null, seq.substring(1));
         this.rootNodes.put(c, new RootNode(curr));
-        root.addSuccessor(curr);
+        this.root.addSuccessor(curr);
+        this.pairs.incrementAndGet();
         return curr;
     }
 

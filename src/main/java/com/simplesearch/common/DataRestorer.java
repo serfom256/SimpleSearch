@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 @Log4j2
@@ -33,7 +34,7 @@ public class DataRestorer {
 
     @PostConstruct
     private void restoreData() {
-        final int shardsCount = shards.size() - 1;
+        final int shardsCount = Math.max(shards.size() - 1, 1);
         new Thread(() -> template.query(SELECT_ALL_QUERY, new ResultSetExtractor<>() {
             int position = 0;
 

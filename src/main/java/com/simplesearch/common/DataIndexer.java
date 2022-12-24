@@ -109,14 +109,14 @@ public class DataIndexer {
             this.indexes = indexes;
             this.start = start;
             this.end = end;
-            this.idx = start;
+            this.idx = 0;
         }
 
         @Override
         public void run() {
             if (start >= end) return;
             int i = 0;
-            final int shardsCount = shards.size() - 1;
+            final int shardsCount = Math.max(shards.size() - 1, 1);
             for (int j = start; j < end; j++) {
                 Map.Entry<String, List<Document>> entry = indexes.get(j);
                 for (Document md : entry.getValue()) {

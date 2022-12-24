@@ -24,4 +24,4 @@ create table if not exists session
 );
 
 insert into search_config
-values ('simplesearch.shards.used', '6');
+values ('simplesearch.shards.used', '1');

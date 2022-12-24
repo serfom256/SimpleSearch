@@ -3,7 +3,7 @@ import time
 import random
 import string
 
-url = 'http://localhost:8050/api/v1/search'
+url = 'http://localhost:8050/simplesearch/api/v1/search'
 
 
 def test_1000_req_random():
@@ -19,7 +19,7 @@ def test_1000_req_random():
     for i in range(1000):
         if i % 100 == 0:
             print(i, "requests done")
-        body = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(random.randint(3, 10)))
+        body = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(random.randint(3, 15)))
         payload["toSearch"] = body
         requests.post(url, json=payload)
     print(requests.post(url, json=payload).text)
@@ -29,8 +29,8 @@ def test_1000_req_random():
 def test_1000_req_static():
     print("Doing 1000 request with static word to search")
     payload = {
-        "toSearch": "_sea_rch",
-        "count": 1,
+        "toSearch": "_java_",
+        "count": 10,
         "distance": 2,
         "sort": True,
         "fuzziness": True
@@ -45,5 +45,5 @@ def test_1000_req_static():
 
 
 if __name__ == "__main__":
-    test_1000_req_random()
+    # test_1000_req_random()
     test_1000_req_static()

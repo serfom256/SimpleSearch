@@ -1,3 +1,0 @@
-add query execution plan
-fix words suggestion
-implement indexing sessions with metadata(indexing session creates on indexing request)

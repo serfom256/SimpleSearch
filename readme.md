@@ -15,11 +15,56 @@ It provides lightning-fast search and suggestion on datasets that contains about
 
 ## Performance
 
-The average time spent on queries is approximately less than 50ms for 1 million words dataset
+All benchmarks performed on a pc with 8cores/16threads 4.3 Ghz CPU and 32gb of RAM. For benchmarks was used dataset
+containing 1 Million random generated words containing ascii characters
+<br>
+Indexed dataset took approximately 850mb of RAM
+<br>
+Was used OpenJdk14
+<br>
+As load testing tool was used Apache JMeter
+<br>
 
-### Examples:
+The average time spent on queries is approximately 70ms for 1 million words dataset
+
+<h3>Was used 1 shard (trie data structure) </h3>
 
 ```
-
-
+{
+    "indexedTotal": 1000000,
+    "cpu": "16",
+    "threads": 19,
+    "memory": "846mb",
+    "shardsInfo": [
+        {
+            "name": "shard-0",
+            "indexed": 1000000
+        }
+    ]
+}
 ```
+
+---
+<h4 align="center">
+    Fuzzy Lookup for word with fuzzy distance 1
+</h4>
+
+![Fuzzy Lookup for word with fuzzy distance 1](benchmarks/1.png)
+
+---
+<h4 align="center">
+    Fuzzy Lookup for word with fuzzy distance 2
+</h4>
+
+![Fuzzy Lookup for word with fuzzy distance 2](benchmarks/2.png)
+
+---
+
+
+<h4 align="center">
+    Fuzzy Lookup for word with fuzzy distance 2
+</h4>
+
+![Fuzzy Lookup for word with fuzzy distance 3](benchmarks/3.png)
+
+
