@@ -13,15 +13,15 @@ create table if not exists search_config
     property varchar(100)
 );
 
-drop table if exists session;
 create table if not exists session
 (
     uuid        varchar(40) primary key,
     status      varchar(20),
     total       int,
     indexed     int,
-    create_time timestamp
+    duration    timestamp not null
 );
+drop table if exists session;
 
 insert into search_config
 values ('simplesearch.shards.used', '1');

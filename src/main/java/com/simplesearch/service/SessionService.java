@@ -4,12 +4,14 @@ package com.simplesearch.service;
 import com.simplesearch.common.DataIndexer;
 import com.simplesearch.entity.document.Document;
 import com.simplesearch.entity.session.IndexingSession;
+import com.simplesearch.entity.session.SessionDTO;
 import com.simplesearch.entity.session.SessionStatus;
 import com.simplesearch.exceptions.SessionNotFoundException;
 import com.simplesearch.repository.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +31,9 @@ public class SessionService {
 
     public IndexingSession startIndexing(Map<String, List<Document>> entities, int indexedTotal) {
         IndexingSession newSession = createSession(indexedTotal);
+        SessionDTO sessionDTO = new SessionDTO(new Date(), newSession);
         repository.saveSession(newSession);
-        dataIndexer.makeIndexesFor(entities, newSession);
+        dataIndexer.makeIndexesFor(entities, sessionDTO);
         return newSession;
     }
 

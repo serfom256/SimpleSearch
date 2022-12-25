@@ -22,5 +22,6 @@ public class SessionController {
     @GetMapping("/session/{id}")
     public ResponseEntity<IndexingSession> session(@PathVariable String id) {
         return ResponseEntity.ok(sessionService.getIndexingSessionById(id));
+//        TODO create filed "duration"
     }
 }

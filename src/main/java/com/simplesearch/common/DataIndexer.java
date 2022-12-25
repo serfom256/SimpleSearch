@@ -3,6 +3,7 @@ package com.simplesearch.common;
 import com.simplesearch.core.entity.ShardList;
 import com.simplesearch.entity.document.Document;
 import com.simplesearch.entity.session.IndexingSession;
+import com.simplesearch.entity.session.SessionDTO;
 import com.simplesearch.entity.session.SessionStatus;
 import com.simplesearch.repository.SessionRepository;
 import com.simplesearch.service.SearchService;
@@ -10,10 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,23 +41,24 @@ public class DataIndexer {
         this.runningSessions = new ConcurrentHashMap<>();
     }
 
-    public void makeIndexesFor(Map<String, List<Document>> indexes, IndexingSession session) {
-        final String sessionId = session.getId();
+    public void makeIndexesFor(Map<String, List<Document>> indexes, SessionDTO session) {
+        final String sessionId = session.getIndexingSession().getId();
         executorService.submit(() -> {
             try {
                 List<IndexingThread> indexingThreads = indexes.size() < DATA_SIZE_THRESHOLD ? makeIndexesSync(indexes) : makeIndexesAsync(indexes);
                 runningSessions.put(sessionId, indexingThreads);
                 executeTasksAsync(indexingThreads);
                 log.info(String.format("Indexing session: %s successfully completed", sessionId));
-                session.setStatus(SessionStatus.DONE);
+                session.getIndexingSession().setStatus(SessionStatus.DONE);
             } catch (Exception e) {
                 e.printStackTrace();
-                session.setStatus(SessionStatus.FAILED);
+                session.getIndexingSession().setStatus(SessionStatus.FAILED);
                 log.info(String.format("Indexing session: %s failed", sessionId));
             }
-            session.setIndexed(getIndexedCountBySessionId(sessionId));
+            session.getIndexingSession().setIndexed(getIndexedCountBySessionId(sessionId));
             runningSessions.remove(sessionId);
-            repository.updateSession(session);
+            session.getIndexingSession().setDuration(new Date(new Date().getTime() - session.getSessionStart().getTime()));
+            repository.updateSession(session.getIndexingSession());
         });
     }
 
