@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 
 @Log4j2

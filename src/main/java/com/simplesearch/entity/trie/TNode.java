@@ -44,7 +44,7 @@ public class TNode {
 
     public void addSerializedId(int id) {
         if (serializedIds == null) serializedIds = new CopyOnWriteArrayList<>();
-        if(!serializedIds.contains(id)) {
+        if (!serializedIds.contains(id)) {
             serializedIds.add(id);
         }
     }
@@ -52,6 +52,10 @@ public class TNode {
     public int getSuccessorsSize() {
         if (successors == null) return 0;
         return successors.size();
+    }
+
+    public int getEndSize() {
+        return seq == null ? 0 : seq.length();
     }
 
     public boolean isEmpty() {

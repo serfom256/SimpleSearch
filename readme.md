@@ -75,7 +75,7 @@ Here's an example how to run SimpleSearch in a docker container
 git clone git@github.com:serfom256/SimpleSearch.git
 ```
 
-- Run mysql
+- Run mysql and redis
 
 ```
 cd SimpleSearch/deployments/docker && docker-compose up
