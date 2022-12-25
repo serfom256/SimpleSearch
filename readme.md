@@ -65,4 +65,33 @@ The average time spent on queries is approximately 70ms for 1 million words data
 
 ![Fuzzy Lookup for word with fuzzy distance 3](benchmarks/3.png)
 
+## Quick start:
+
+Here's an example how to run SimpleSearch in a docker container
+
+- Clone the SimpleSearch repository:
+
+```
+git clone git@github.com:serfom256/SimpleSearch.git
+```
+
+- Run mysql
+
+```
+cd SimpleSearch/deployments/docker && docker-compose up
+```
+
+- Build docker image:
+
+```
+cd SimpleSearch
+
+docker build -t simplesearch:latest -f deployments/docker/Dockerfile .
+```
+
+- Run:
+
+```
+docker run simplesearch
+```
 

@@ -116,7 +116,7 @@ public class DataIndexer {
         public void run() {
             if (start >= end) return;
             int i = 0;
-            final int shardsCount = Math.max(shards.size() - 1, 1);
+            final int shardsCount = Math.max(shards.size(), 1);
             for (int j = start; j < end; j++) {
                 Map.Entry<String, List<Document>> entry = indexes.get(j);
                 for (Document md : entry.getValue()) {
