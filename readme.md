@@ -78,10 +78,12 @@ git clone git@github.com:serfom256/SimpleSearch.git
 - Run mysql and redis
 
 ```
-cd SimpleSearch/deployments/docker && docker-compose up
+cd SimpleSearch
+
+docker-compose -f deployments/docker/docker-compose.yaml up
 ```
 
-- Build docker image:
+- Build docker image of the SimpleSearch:
 
 ```
 cd SimpleSearch
@@ -89,7 +91,7 @@ cd SimpleSearch
 docker build -t simplesearch:latest -f deployments/docker/Dockerfile .
 ```
 
-- Run:
+- Run SimpleSearch on Docker:
 
 ```
 docker run simplesearch

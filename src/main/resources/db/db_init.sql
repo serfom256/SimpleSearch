@@ -11,7 +11,7 @@ create table if not exists search_config
     property varchar(100)
 );
 
-create table if not exists session
+create table if not exists sessions
 (
     uuid        varchar(40) primary key,
     status      varchar(20),

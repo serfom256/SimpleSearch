@@ -45,5 +45,5 @@ def test_1000_req_static():
 
 
 if __name__ == "__main__":
-    # test_1000_req_random()
+    test_1000_req_random()
     test_1000_req_static()

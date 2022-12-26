@@ -14,9 +14,9 @@ import java.util.Date;
 public class SessionRepository {
 
     private final JdbcTemplate jdbcTemplate;
-    private static final String GET_SESSION_QUERY = "SELECT * FROM session WHERE uuid = ?";
-    private static final String SAVE_SESSION_QUERY = "INSERT INTO session (uuid, status, total, indexed, duration) VALUES (?, ?, ?, ?, ?)";
-    private static final String UPDATE_SESSION_QUERY = "UPDATE session SET status = ?, indexed = ?, duration = ? WHERE uuid = ?";
+    private static final String GET_SESSION_QUERY = "SELECT * FROM sessions WHERE uuid = ?";
+    private static final String SAVE_SESSION_QUERY = "INSERT INTO sessions (uuid, status, total, indexed, duration) VALUES (?, ?, ?, ?, ?)";
+    private static final String UPDATE_SESSION_QUERY = "UPDATE sessions SET status = ?, indexed = ?, duration = ? WHERE uuid = ?";
 
     @Autowired
     public SessionRepository(JdbcTemplate jdbcTemplate) {

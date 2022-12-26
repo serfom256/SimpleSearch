@@ -2,7 +2,6 @@ package com.simplesearch.common;
 
 import com.simplesearch.core.entity.ShardList;
 import com.simplesearch.entity.document.Document;
-import com.simplesearch.entity.session.IndexingSession;
 import com.simplesearch.entity.session.SessionDTO;
 import com.simplesearch.entity.session.SessionStatus;
 import com.simplesearch.repository.SessionRepository;

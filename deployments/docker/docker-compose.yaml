@@ -7,13 +7,14 @@ services:
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: '0000'
       MYSQL_ROOT_PASSWORD: '0000'
+    command: --init-file /init/db.sql
     ports:
       - '3306:3306'
     volumes:
-      - ./mysql-data:/var/lib/mysql
+      - ./init_db:/init # for bootstrapping from db.script
 
   redis:
     image: redis:6.2-alpine
-    restart: always
+    restart: on-failure
     ports:
       - '6379:6379'

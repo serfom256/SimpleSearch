@@ -8,4 +8,3 @@ COPY ./../build/libs/$searchJarEnv ./simplesearch/
 COPY ./deployments/docker/entrypoint.sh ./
 RUN chmod +x ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
-
