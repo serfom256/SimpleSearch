@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.simplesearch'
-version = '0.35.7-beta'
+//version = '0.35.7-beta'
 
 jar {
     manifest {

@@ -1,6 +1,6 @@
 FROM openjdk:14
 
-ARG SimpleSearchJar=SimpleSearch-0.35.7-beta.jar
+ARG SimpleSearchJar=SimpleSearch.jar
 
 EXPOSE 8050
 ENV searchJarEnv=$SimpleSearchJar

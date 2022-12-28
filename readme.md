@@ -67,7 +67,39 @@ The average time spent on queries is approximately 70ms for 1 million words data
 
 ## Quick start:
 
-Here's an example how to run SimpleSearch in a docker container
+## Run SimpleSearch locally
+
+#### For running SimpleSearch you need to have Java Runtime Environment 14 or higher
+
+- Check java version
+
+```
+java -version
+```
+
+- Clone the SimpleSearch repository:
+
+```
+git clone git@github.com:serfom256/SimpleSearch.git
+```
+
+- Build executable jar file from source:
+
+```
+cd SimpleSearch && gradle build jar
+```
+
+- Run SimpleSearch
+
+```
+java -jar build/libs/SimpleSearch.jar
+```
+
+---
+
+## Run SimpleSearch in docker
+
+Here's an example how to run SimpleSearch in docker container
 
 - Clone the SimpleSearch repository:
 
@@ -86,8 +118,6 @@ docker-compose -f deployments/docker/docker-compose.yaml up
 - Build docker image of the SimpleSearch:
 
 ```
-cd SimpleSearch
-
 docker build -t simplesearch:latest -f deployments/docker/Dockerfile .
 ```
 
