@@ -33,7 +33,7 @@ public class DataReadingService {
             if (path.isFile()) {
                 readFile(path, indexingResponse, new ArrayList<>(request.getSeparators()));
             }
-            indexFilesRecursively(path, indexingResponse, request.getFilesType(), new ArrayList<>(request.getSeparators()));
+            indexFilesRecursively(path, indexingResponse, request.getMask(), new ArrayList<>(request.getSeparators()));
         } catch (Exception e) {
             e.printStackTrace();
         }

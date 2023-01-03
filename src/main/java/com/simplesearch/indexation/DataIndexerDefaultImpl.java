@@ -1,4 +1,4 @@
-package com.simplesearch.common;
+package com.simplesearch.indexation;
 
 import com.simplesearch.core.entity.ShardList;
 import com.simplesearch.entity.document.Document;
@@ -8,6 +8,7 @@ import com.simplesearch.repository.SessionRepository;
 import com.simplesearch.service.SearchService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -17,9 +18,9 @@ import java.util.concurrent.Executors;
 
 
 @Log4j2
+@Primary
 @Component
-public class DataIndexer {
-
+public class DataIndexerDefaultImpl implements DataIndexer {
     private final ShardList shards;
     private final SearchService searchService;
     private final ExecutorService executorService;
@@ -32,7 +33,7 @@ public class DataIndexer {
     private static final int THREADS_COUNT = 10;
 
     @Autowired
-    public DataIndexer(SearchService searchService, ShardList shards, SessionRepository repository) {
+    public DataIndexerDefaultImpl(SearchService searchService, ShardList shards, SessionRepository repository) {
         this.shards = shards;
         this.repository = repository;
         this.executorService = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
@@ -40,6 +41,7 @@ public class DataIndexer {
         this.runningSessions = new ConcurrentHashMap<>();
     }
 
+    @Override
     public void makeIndexesFor(Map<String, List<Document>> indexes, SessionDTO session) {
         final String sessionId = session.getIndexingSession().getId();
         executorService.submit(() -> {
@@ -61,6 +63,7 @@ public class DataIndexer {
         });
     }
 
+    @Override
     public int getIndexedCountBySessionId(String sessionId) {
         List<IndexingThread> list = runningSessions.get(sessionId);
         if (list == null) return -1;

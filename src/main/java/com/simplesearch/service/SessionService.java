@@ -1,12 +1,12 @@
 package com.simplesearch.service;
 
 
-import com.simplesearch.common.DataIndexer;
 import com.simplesearch.entity.document.Document;
 import com.simplesearch.entity.session.IndexingSession;
 import com.simplesearch.entity.session.SessionDTO;
 import com.simplesearch.entity.session.SessionStatus;
 import com.simplesearch.exceptions.SessionNotFoundException;
+import com.simplesearch.indexation.DataIndexer;
 import com.simplesearch.repository.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,6 @@ public class SessionService {
 
     private final SessionRepository repository;
     private final DataIndexer dataIndexer;
-
     @Autowired
     public SessionService(SessionRepository repository, DataIndexer dataIndexer) {
         this.repository = repository;
