@@ -107,7 +107,7 @@ Here's an example how to run SimpleSearch in docker container
 git clone git@github.com:serfom256/SimpleSearch.git
 ```
 
-- Run mysql and redis
+- Run mysql
 
 ```
 cd SimpleSearch

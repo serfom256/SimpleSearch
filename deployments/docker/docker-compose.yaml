@@ -12,9 +12,3 @@ services:
       - '3306:3306'
     volumes:
       - ./init_db:/init # for bootstrapping from db.script
-
-  redis:
-    image: redis:6.2-alpine
-    restart: on-failure
-    ports:
-      - '6379:6379'
