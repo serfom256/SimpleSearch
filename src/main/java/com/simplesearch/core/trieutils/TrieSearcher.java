@@ -40,8 +40,9 @@ public class TrieSearcher {
         for (TNode v : start.successors) {
             if (pos < entity.getSearchedLength() && v.element == entity.getCurrent().charAt(pos)) {
                 fuzzyLookup(v, pos + 1, typos, entity);
+            } else {
+                fuzzyLookup(v, pos + 1, typos - 1, entity);
             }
-            fuzzyLookup(v, pos + 1, typos - 1, entity);
             fuzzyLookup(v, pos, typos - 1, entity);
             fuzzyLookup(start, pos + 1, typos - 1, entity);
             if (entity.isFounded()) return;

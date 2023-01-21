@@ -25,7 +25,7 @@ Was used OpenJdk14
 As load testing tool was used Apache JMeter
 <br>
 
-The average time spent on queries is approximately 70ms for 1 million words dataset
+The average time spent on queries is approximately 120ms for 1 million words dataset
 
 ```
 {
