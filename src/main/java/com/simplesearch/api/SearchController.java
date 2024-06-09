@@ -1,8 +1,9 @@
 package com.simplesearch.api;
 
 import com.simplesearch.core.search.AsyncQueryExecutor;
-import com.simplesearch.entity.Query;
-import com.simplesearch.entity.SearchResponse;
+import com.simplesearch.model.request.Query;
+import com.simplesearch.model.response.SearchResponse;
+
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

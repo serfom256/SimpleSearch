@@ -1,8 +1,6 @@
 package com.simplesearch.core;
 
 
-import com.simplesearch.entity.trie.TNode;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +8,8 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import com.simplesearch.model.internal.TNode;
 
 
 public class TrieMap {
@@ -69,18 +69,18 @@ public class TrieMap {
 
     private TNode putSequence(String sequence) {
         RootNode rn = rootNodes.get(sequence.charAt(0));
-        TNode curr = rn.node;
+        TNode current = rn.node;
         for (int i = 1; i < sequence.length(); i++) {
             char c = sequence.charAt(i);
-            TNode next = curr.getNode(c);
+            TNode next = current.getNode(c);
             if (next == null) {
                 String sq = sequence.substring(i);
-                if (Objects.equals(curr.seq, sq)) return curr;
-                return buildTree(curr, sq);
+                if (Objects.equals(current.seq, sq)) return current;
+                return buildTree(current, sq);
             }
-            curr = next;
+            current = next;
         }
-        return splitTree(curr);
+        return splitTree(current);
     }
 
 
@@ -91,27 +91,27 @@ public class TrieMap {
                 prev = root;
             }
             prev.successors.remove(node);
-            TNode curr = new TNode(node.element, prev);
-            prev.addSuccessor(curr);
-            TNode toNext = new TNode(node.seq.charAt(0), curr, node.seq.substring(1));
+            TNode current = new TNode(node.element, prev);
+            prev.addSuccessor(current);
+            TNode toNext = new TNode(node.seq.charAt(0), current, node.seq.substring(1));
             toNext.isEnd = node.isEnd;
             toNext.serializedIds = node.serializedIds;
-            curr.addSuccessor(toNext);
+            current.addSuccessor(toNext);
             if (prev == root) {
-                rootNodes.get(node.element).node = curr;
+                rootNodes.get(node.element).node = current;
             }
-            return curr;
+            return current;
         }
         return node;
     }
 
     private TNode insertToRoot(String seq) {
         char c = seq.charAt(0);
-        TNode curr = new TNode(c, null, seq.substring(1));
-        this.rootNodes.put(c, new RootNode(curr));
-        this.root.addSuccessor(curr);
+        TNode current = new TNode(c, null, seq.substring(1));
+        this.rootNodes.put(c, new RootNode(current));
+        this.root.addSuccessor(current);
         this.pairs.incrementAndGet();
-        return curr;
+        return current;
     }
 
 
@@ -127,7 +127,9 @@ public class TrieMap {
         node.isEnd = false;
         List<Integer> ids = node.serializedIds;
         node.serializedIds = null;
+
         int pos = 0, len = Math.min(seq.length(), nodeSeq.length());
+
         while (pos < len && seq.charAt(pos) == nodeSeq.charAt(pos)) {
             TNode newNode = new TNode(seq.charAt(pos), node);
             node.addSuccessor(newNode);
@@ -189,8 +191,7 @@ public class TrieMap {
         }
     }
 
-    //    @Override
-    public String tostring() {
+    public String print() {
         if (pairs.get() == 0) return "[]";
         StringBuilder s = new StringBuilder("[");
         toStringHelper(s, root);

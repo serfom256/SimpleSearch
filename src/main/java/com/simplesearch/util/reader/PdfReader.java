@@ -1,10 +1,11 @@
 package com.simplesearch.util.reader;
 
-import com.simplesearch.entity.document.Document;
-import com.simplesearch.entity.document.DocumentType;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.EncryptedDocumentException;
+
+import com.simplesearch.model.internal.document.Document;
+import com.simplesearch.model.internal.document.DocumentType;
 
 import java.io.File;
 import java.io.IOException;

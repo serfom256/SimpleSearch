@@ -1,13 +1,13 @@
 package com.simplesearch.util.reader;
 
-import com.simplesearch.entity.document.Document;
-import com.simplesearch.entity.document.DocumentType;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.simplesearch.model.internal.document.Document;
+import com.simplesearch.model.internal.document.DocumentType;
 
 public class PathReader implements Reader {
     @Override

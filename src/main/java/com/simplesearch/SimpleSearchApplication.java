@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class SimpleSearchApplication {
 
     public static void main(String[] args) {
-        ConfigurableApplicationContext run = SpringApplication.run(SimpleSearchApplication.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(SimpleSearchApplication.class, args);
     }
 
 }

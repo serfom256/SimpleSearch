@@ -2,8 +2,9 @@ package com.simplesearch.util.reader;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.simplesearch.entity.document.Document;
-import com.simplesearch.entity.document.DocumentType;
+import com.simplesearch.model.internal.document.Document;
+import com.simplesearch.model.internal.document.DocumentType;
+
 import org.springframework.stereotype.Component;
 
 import java.io.File;

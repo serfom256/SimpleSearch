@@ -2,7 +2,8 @@ package com.simplesearch.core;
 
 import com.simplesearch.core.trieutils.TriePrefixMatcher;
 import com.simplesearch.core.trieutils.TrieSearcher;
-import com.simplesearch.entity.LookupResult;
+import com.simplesearch.model.internal.LookupResult;
+
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;

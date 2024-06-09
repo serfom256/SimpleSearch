@@ -1,6 +1,6 @@
 package com.simplesearch.api;
 
-import com.simplesearch.entity.session.IndexingSession;
+import com.simplesearch.model.session.IndexingSession;
 import com.simplesearch.service.SessionService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;

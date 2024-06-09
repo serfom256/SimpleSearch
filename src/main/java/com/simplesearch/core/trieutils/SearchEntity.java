@@ -1,13 +1,14 @@
 package com.simplesearch.core.trieutils;
 
-import com.simplesearch.entity.LookupResult;
-import com.simplesearch.entity.trie.TNode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.simplesearch.model.internal.LookupResult;
+import com.simplesearch.model.internal.TNode;
 
 public class SearchEntity {
     private final int count;

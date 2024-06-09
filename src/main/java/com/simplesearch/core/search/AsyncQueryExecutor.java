@@ -1,11 +1,11 @@
 package com.simplesearch.core.search;
 
 import com.simplesearch.common.chain.DefaultChainBuilder;
-import com.simplesearch.entity.shard.Shard;
-import com.simplesearch.core.entity.ShardList;
-import com.simplesearch.entity.LookupResult;
-import com.simplesearch.entity.Query;
-import com.simplesearch.entity.SearchResponse;
+import com.simplesearch.core.model.ShardList;
+import com.simplesearch.model.internal.LookupResult;
+import com.simplesearch.model.internal.shard.Shard;
+import com.simplesearch.model.request.Query;
+import com.simplesearch.model.response.SearchResponse;
 import com.simplesearch.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,14 +43,14 @@ public class AsyncQueryExecutor {
     public SearchResponse suggest(final Query query) {
         long qTime = System.currentTimeMillis();
         List<LookupResult> results = searchAsync(suggestFunc, query);
-        List<LookupResult> withMetadata = searchService.lookupForResults(results);
+        List<LookupResult> withMetadata = searchService.lookup(results);
         return builder.executeQueryChain(query, withMetadata, qTime, shardList.size());
     }
 
     public SearchResponse search(final Query query) {
         long qTime = System.currentTimeMillis();
         List<LookupResult> results = searchAsync(findFunc, query);
-        List<LookupResult> withMetadata = searchService.lookupForResults(results);
+        List<LookupResult> withMetadata = searchService.lookup(results);
         return builder.executeQueryChain(query, withMetadata, qTime, shardList.size());
     }
 

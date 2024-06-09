@@ -1,10 +1,10 @@
 package com.simplesearch.core.trieutils;
 
-import com.simplesearch.entity.LookupResult;
-import com.simplesearch.entity.trie.TNode;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.simplesearch.model.internal.LookupResult;
+import com.simplesearch.model.internal.TNode;
 
 
 public class TriePrefixMatcher {

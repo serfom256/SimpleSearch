@@ -1,12 +1,13 @@
 package com.simplesearch.repository;
 
-import com.simplesearch.entity.document.Document;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+
+import com.simplesearch.model.internal.document.Document;
 
 import java.io.*;
 import java.sql.PreparedStatement;

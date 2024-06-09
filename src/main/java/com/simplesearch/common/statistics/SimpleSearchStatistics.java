@@ -1,9 +1,10 @@
 package com.simplesearch.common.statistics;
 
-import com.simplesearch.entity.shard.Shard;
-import com.simplesearch.core.entity.ShardList;
-import com.simplesearch.entity.shard.ShardInfoHeader;
-import com.simplesearch.entity.shard.ShardState;
+import com.simplesearch.core.model.ShardList;
+import com.simplesearch.model.internal.shard.Shard;
+import com.simplesearch.model.internal.shard.ShardInfoHeader;
+import com.simplesearch.model.internal.shard.ShardState;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

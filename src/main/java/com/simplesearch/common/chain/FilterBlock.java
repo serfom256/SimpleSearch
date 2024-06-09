@@ -1,10 +1,10 @@
 package com.simplesearch.common.chain;
 
-import com.simplesearch.entity.LookupResult;
-import com.simplesearch.entity.Query;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.simplesearch.model.internal.LookupResult;
+import com.simplesearch.model.request.Query;
 
 public class FilterBlock extends QueryChain {
 

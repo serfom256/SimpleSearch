@@ -1,9 +1,10 @@
 package com.simplesearch.util.reader;
 
-import com.simplesearch.entity.document.Document;
-import com.simplesearch.entity.document.DocumentType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+
+import com.simplesearch.model.internal.document.Document;
+import com.simplesearch.model.internal.document.DocumentType;
 
 import java.io.File;
 import java.io.FileInputStream;

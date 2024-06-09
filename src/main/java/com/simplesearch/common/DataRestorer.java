@@ -1,6 +1,5 @@
 package com.simplesearch.common;
 
-import com.simplesearch.core.entity.ShardList;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+
+import com.simplesearch.core.model.ShardList;
 
 import javax.annotation.PostConstruct;
 import java.sql.ResultSet;

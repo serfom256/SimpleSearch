@@ -1,7 +1,7 @@
 package com.simplesearch.service;
 
-import com.simplesearch.entity.LookupResult;
-import com.simplesearch.entity.document.Document;
+import com.simplesearch.model.internal.LookupResult;
+import com.simplesearch.model.internal.document.Document;
 import com.simplesearch.repository.MetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class SearchService {
         return repository.serialize(idx, metadata);
     }
 
-    public List<LookupResult> lookupForResults(List<LookupResult> results) {
+    public List<LookupResult> lookup(List<LookupResult> results) {
         for (LookupResult res : results) {
             res.setMetadata(new ArrayList<>());
             res.getSerializedIds().forEach(id -> res.getMetadata().add(repository.deserialize(id)));

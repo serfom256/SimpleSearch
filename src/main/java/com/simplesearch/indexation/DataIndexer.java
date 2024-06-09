@@ -1,10 +1,10 @@
 package com.simplesearch.indexation;
 
-import com.simplesearch.entity.document.Document;
-import com.simplesearch.entity.session.SessionDTO;
-
 import java.util.List;
 import java.util.Map;
+
+import com.simplesearch.model.internal.document.Document;
+import com.simplesearch.model.session.SessionDTO;
 
 public interface DataIndexer {
 

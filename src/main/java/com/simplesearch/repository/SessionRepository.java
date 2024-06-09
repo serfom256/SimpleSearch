@@ -1,11 +1,12 @@
 package com.simplesearch.repository;
 
-import com.simplesearch.entity.session.IndexingSession;
-import com.simplesearch.entity.session.SessionStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.simplesearch.model.session.IndexingSession;
+import com.simplesearch.model.session.SessionStatus;
 
 import java.util.Date;
 

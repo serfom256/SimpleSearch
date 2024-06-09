@@ -1,11 +1,11 @@
 package com.simplesearch.common.chain;
 
-import com.simplesearch.entity.LookupResult;
-import com.simplesearch.entity.Query;
-import com.simplesearch.entity.ResponseHeader;
-import com.simplesearch.entity.SearchResponse;
-
 import java.util.List;
+
+import com.simplesearch.model.internal.LookupResult;
+import com.simplesearch.model.request.Query;
+import com.simplesearch.model.response.ResponseHeader;
+import com.simplesearch.model.response.SearchResponse;
 
 public class DefaultChainBuilder {
 

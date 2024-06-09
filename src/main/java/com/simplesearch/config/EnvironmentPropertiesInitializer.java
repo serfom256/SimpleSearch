@@ -2,7 +2,6 @@ package com.simplesearch.config;
 
 import com.simplesearch.common.LogoPrinter;
 import com.simplesearch.common.PropertiesPrinter;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.EnvironmentAware;
@@ -16,8 +15,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
-
-@Log4j2
 @Configuration
 @DependsOn("dbCreator")
 public class EnvironmentPropertiesInitializer implements BeanPostProcessor, InitializingBean, EnvironmentAware {

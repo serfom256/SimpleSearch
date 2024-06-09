@@ -1,7 +1,7 @@
 package com.simplesearch.repository;
 
 
-import com.simplesearch.entity.document.Document;
+import com.simplesearch.model.internal.document.Document;
 
 public interface MetadataRepository {
     Integer serialize(String idx, Document metadata);

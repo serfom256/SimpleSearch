@@ -1,10 +1,10 @@
 package com.simplesearch.core.trieutils;
 
-import com.simplesearch.entity.LookupResult;
-import com.simplesearch.entity.trie.TNode;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.simplesearch.model.internal.LookupResult;
+import com.simplesearch.model.internal.TNode;
 
 public class TrieSearcher {
 
@@ -52,11 +52,11 @@ public class TrieSearcher {
 
     private void findNext(TNode start, int pos, int typos, SearchEntity entity) {
         String next = entity.getNext();
-        String curr = entity.getCurrent();
+        String current = entity.getCurrent();
         int founded = entity.getResult().size();
         entity.setCurrent(entity.getCurrent() + " " + next);
         fuzzyLookup(start, pos, typos, entity);
-        entity.setCurrent(curr);
+        entity.setCurrent(current);
         if (founded == entity.getResult().size()) {
             entity.setWordPos(entity.getWordPos() - 1);
         }

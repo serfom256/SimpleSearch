@@ -9,6 +9,7 @@ import java.util.Date;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<ErrorMessage> resourceNotFoundException(Exception ex) {
         ex.printStackTrace();
