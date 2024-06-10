@@ -32,7 +32,7 @@ public class SearchController {
     }
 
     @Async
-    @GetMapping("/suggest")
+    @PostMapping("/suggest")
     public CompletableFuture<SearchResponse> suggest(@RequestBody Query query) {
         log.debug(query);
         return CompletableFuture.completedFuture(executor.suggest(query));

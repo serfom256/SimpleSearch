@@ -20,7 +20,7 @@ containing 1 Million random generated words containing ascii characters
 <br>
 Indexed dataset took approximately 850mb of RAM for one shard(trie data structure)
 <br>
-Was used OpenJdk14
+Was used OpenJdk17
 <br>
 As load testing tool was used Apache JMeter
 <br>
@@ -65,11 +65,78 @@ The average time spent on queries is approximately 120ms for 1 million words dat
 
 ![Fuzzy Lookup for word with fuzzy distance 3](benchmarks/3.png)
 
+## Api usage:
+
+
+#### Create indexes on file:
+#### Request: POST http://host:port/simplesearch/api/v1/save
+#### Body:
+```json
+{
+  "path": "/path/to/local/file.extension",
+  "mask": [], // mask to filter files by extension/regex [if specified path is directory] (not required)
+  "separators": [] // separators to split file content (not required)
+}
+```
+#### Response:
+```json
+{
+  "session": "session_uuid",
+  "indexingTime": 4,
+  "documentsIndexed": 1,
+  "entitiesIndexed": 250
+}
+```
+
+---
+
+#### Fuzzy search:
+#### Request: POST http://host:port/simplesearch/api/v1/search
+#### Body:
+```json
+{
+  "toSearch": "text-to-search",
+  "count": 100, // expected amount of founded matches
+  "distance": 1, // fuzzy distance
+  "sort": true, // sort result by similarity
+  "fuzziness": true, // evaluate fuzzy distance based on search word length
+  "operator": "ALL"
+}
+```
+#### Response:
+```json
+{
+  "header": {
+    "normalizingTime": null,
+    "sorted": true,
+    "founded": 1,
+    "shardsUsed": 1,
+    "Qtime": 5
+  },
+  "resultList": [
+    {
+      "key": "too",
+      "metadata": [
+        {
+          "path": "path/to/indexed/file",
+          "position": 129, // position in file
+          "type": "PLAIN_TEXT", // document type
+          "content": null
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+
 ## Quick start:
 
 ## Run SimpleSearch locally
 
-#### For running SimpleSearch you need to have Java Runtime Environment 14 or higher
+#### For running SimpleSearch you need to have Java Runtime Environment 17 or higher
 
 - Check java version
 
