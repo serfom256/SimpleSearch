@@ -13,4 +13,10 @@ public class LookupResult {
     @JsonIgnore
     private List<Integer> serializedIds; // todo create lookupResult dto
     private List<Document> metadata;
+    
+    public LookupResult(String key, List<Integer> serializedIds) {
+        this.key = key;
+        this.serializedIds = serializedIds;
+    }
+
 }

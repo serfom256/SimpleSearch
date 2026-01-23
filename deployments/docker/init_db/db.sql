@@ -6,7 +6,7 @@ create table if not exists data
 (
     id   int primary key not null auto_increment,
     data blob,
-    idx  varchar(1000) CHARACTER SET utf8mb4
+    idx  varchar(512) CHARACTER SET utf8mb4
 );
 
 drop table if exists search_config;

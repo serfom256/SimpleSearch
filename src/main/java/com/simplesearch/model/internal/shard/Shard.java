@@ -1,7 +1,7 @@
 package com.simplesearch.model.internal.shard;
 
 import com.simplesearch.core.QueryService;
-import com.simplesearch.core.TrieMap;
+import com.simplesearch.core.Trie;
 import com.simplesearch.model.internal.LookupResult;
 import com.simplesearch.model.request.Query;
 
@@ -14,7 +14,7 @@ public class Shard {
 
     public Shard(String name) {
         this.name = name;
-        service = new QueryService(new TrieMap());
+        service = new QueryService(new Trie());
     }
 
     public void save(String key, int metadataId) {

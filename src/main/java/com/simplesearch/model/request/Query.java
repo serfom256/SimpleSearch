@@ -15,5 +15,4 @@ public class Query {
     private boolean sort;
     private String groupBy;
     private boolean fuzziness;
-    private Operator operator;
 }

@@ -1,8 +1,9 @@
 package com.simplesearch.common;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.dao.DataAccessException;
@@ -12,25 +13,21 @@ import org.springframework.stereotype.Component;
 
 import com.simplesearch.core.model.ShardList;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
+
 import java.sql.ResultSet;
 
 
-@Log4j2
+@Slf4j
 @Component
 @DependsOn("dbCreator")
 @ConditionalOnProperty(value = "simplesearch.restore.data", havingValue = "true")
+@RequiredArgsConstructor
 public class DataRestorer {
 
     private final JdbcTemplate template;
     private static final String SELECT_ALL_QUERY = "SELECT * from data";
     private final ShardList shards;
-
-    @Autowired
-    public DataRestorer(JdbcTemplate template, ShardList shards) {
-        this.template = template;
-        this.shards = shards;
-    }
 
     @PostConstruct
     private void restoreData() {

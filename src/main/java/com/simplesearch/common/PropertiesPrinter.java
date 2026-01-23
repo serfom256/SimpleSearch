@@ -1,10 +1,10 @@
 package com.simplesearch.common;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
-@Log4j2
+@Slf4j
 public class PropertiesPrinter {
     public void printProperties(Map<String, Object> props) {
         final String propsInfo = "property: [%s] = [%s]";

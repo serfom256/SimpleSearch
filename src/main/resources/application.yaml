@@ -1,0 +1,16 @@
+server:
+    servlet.contextPath: /simplesearch
+    port: 8050
+spring:
+    main.banner-mode: off
+    datasource:
+        url: 'jdbc:mysql://localhost:3306/simplesearch'
+        username: 'root'
+        password: '0000' 
+
+simplesearch:
+    restore.data: true
+    ddl-on-startup: true
+
+spring.servlet.multipart.max-file-size: 100MB
+spring.servlet.multipart.max-request-size: 100MB

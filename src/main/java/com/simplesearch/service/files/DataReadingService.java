@@ -6,7 +6,6 @@ import com.simplesearch.model.internal.document.Document;
 import com.simplesearch.model.internal.document.DocumentType;
 import com.simplesearch.model.request.IndexingRequest;
 import com.simplesearch.util.ReaderCommand;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -15,12 +14,7 @@ import java.util.*;
 @Component
 public class DataReadingService {
 
-    private final ReaderCommand readerCommand;
-
-    @Autowired
-    public DataReadingService() {
-        this.readerCommand = new ReaderCommand();
-    }
+    private final ReaderCommand readerCommand = new ReaderCommand();
 
     public IndexingDTO collectEntities(IndexingRequest request) {
         File dataDir = new File(request.getPath());

@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,7 +31,7 @@ public class MultipartIndexingService implements FileIndexingService<MultipartFi
         long startTime = System.currentTimeMillis();
 
         final File file = createTemporaryFile(multipartFile);
-        final IndexingRequest request = buildRequest(file);
+        final IndexingRequest request = new IndexingRequest(file.getAbsolutePath());
 
         IndexingDTO indexingDTO = dataReadingService.collectEntities(request);
         long indexingTime = System.currentTimeMillis() - startTime;
@@ -41,14 +40,6 @@ public class MultipartIndexingService implements FileIndexingService<MultipartFi
 
         return new IndexingResponse(session.getId(), indexingTime, indexingDTO.getDocumentsIndexed(),
                 indexingDTO.getEntitiesIndexed());
-    }
-
-    private IndexingRequest buildRequest(final File file) {
-        return IndexingRequest.builder()
-                .path(file.getAbsolutePath())
-                .separators(Set.of())
-                .mask(Set.of())
-                .build();
     }
 
     private File createTemporaryFile(final MultipartFile multipartFile) {

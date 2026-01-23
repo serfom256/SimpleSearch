@@ -8,7 +8,8 @@ import com.simplesearch.model.session.SessionDTO;
 import com.simplesearch.model.session.SessionStatus;
 import com.simplesearch.repository.SessionRepository;
 import com.simplesearch.service.SearchService;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-@Log4j2
+@Slf4j
 //@Primary
 @Component
 public class RecursiveDataIndexer implements DataIndexer {

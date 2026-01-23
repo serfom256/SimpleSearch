@@ -2,16 +2,17 @@ package com.simplesearch.util.reader;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.poi.EncryptedDocumentException;
-
 import com.simplesearch.model.internal.document.Document;
 import com.simplesearch.model.internal.document.DocumentType;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class PdfReader extends AbstractReader {
 
     @Override
@@ -20,10 +21,10 @@ public class PdfReader extends AbstractReader {
     }
 
     private String readPdf(File file) {
-        try {
-            PDDocument document = PDDocument.load(file);
+        try (PDDocument document = PDDocument.load(file)) {
             if (!document.isEncrypted()) {
-                throw new EncryptedDocumentException("File is encrypted!");
+                log.warn("File {} is encrypted!", file.getAbsolutePath());
+                return "";
             }
             PDFTextStripper stripper = new PDFTextStripper();
             return stripper.getText(document);

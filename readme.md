@@ -69,12 +69,12 @@ The average time spent on queries is approximately 120ms for 1 million words dat
 
 
 #### Create indexes on file:
-#### Request: POST http://host:port/simplesearch/api/v1/save
+#### Request: POST http://host:port/simplesearch/api/v1/index
 #### Body:
 ```json
 {
   "path": "/path/to/local/file.extension",
-  "mask": [], // mask to filter files by extension/regex [if specified path is directory] (not required)
+  "mask": [], // mask to filter files by extension/regex, used when the specified path is directory (not required)
   "separators": [] // separators to split file content (not required)
 }
 ```
@@ -100,7 +100,6 @@ The average time spent on queries is approximately 120ms for 1 million words dat
   "distance": 1, // fuzzy distance
   "sort": true, // sort result by similarity
   "fuzziness": true, // evaluate fuzzy distance based on search word length
-  "operator": "ALL"
 }
 ```
 #### Response:

@@ -8,6 +8,7 @@ import com.simplesearch.model.internal.document.DocumentType;
 
 public abstract class AbstractReader implements Reader {
     private static final Map<Character, String> regexMatch = new HashMap<>();
+    private static final int MAX_IDX_SIZE = 512; 
 
     static {
         regexMatch.put(' ', "\\s");
@@ -18,7 +19,7 @@ public abstract class AbstractReader implements Reader {
         Map<String, List<Document>> dict = new HashMap<>();
         for (int i = 0; i < words.size(); i++) {
             String str = words.get(i);
-            if (str.isEmpty()) {
+            if (str.isEmpty() || str.length() > MAX_IDX_SIZE) {
                 continue;
             }
             List<Document> documents = dict.getOrDefault(str, new ArrayList<>());

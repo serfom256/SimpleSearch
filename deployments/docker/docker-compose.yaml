@@ -7,8 +7,10 @@ services:
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: '0000'
       MYSQL_ROOT_PASSWORD: '0000'
+      MYSQL_DATABASE: simplesearch 
     command: --init-file /init/db.sql
     ports:
       - '3306:3306'
     volumes:
       - ./init_db:/init # for bootstrapping from db.script
+      - ./data:/var/lib/mysql

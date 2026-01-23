@@ -1,7 +1,8 @@
 package com.simplesearch.repository;
 
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,19 +16,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-@Log4j2
+@Slf4j
 @Repository
+@RequiredArgsConstructor
 public class DocumentsRepository implements MetadataRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private static final String CREATE_NEW_ENTRY_QUERY = "INSERT INTO data(data, idx) VALUES(?, ?)";
     private static final String SELECT_METADATA_QUERY = "SELECT data from data where id = ?";
-
-
-    @Autowired
-    public DocumentsRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     public Integer serialize(String idx, Document metadata) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
