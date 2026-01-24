@@ -24,7 +24,7 @@ public class LocalFileIndexingService implements FileIndexingService<IndexingReq
         long startTime = System.currentTimeMillis();
         IndexingDTO indexingDTO = dataReadingService.collectEntities(request);
         long indexingTime = System.currentTimeMillis() - startTime;
-        IndexingSession session = sessionService.startIndexing(indexingDTO.getTotal(),
+        IndexingSession session = sessionService.startIndexing(indexingDTO.getDocuments(),
                 indexingDTO.getEntitiesIndexed());
         return new IndexingResponse(session.getId(), indexingTime, indexingDTO.getDocumentsIndexed(),
                 indexingDTO.getEntitiesIndexed());

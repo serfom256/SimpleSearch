@@ -65,9 +65,11 @@ public class Trie {
                 return;
             }
 
-            n.isEnd = true;
-            size++;
-            n.serialIds.add(serialId);
+            if (!n.serialIds.contains(serialId)) {
+                n.isEnd = true;
+                size++;
+                n.serialIds.add(serialId);
+            }
         } finally {
             lock.unlock();
         }

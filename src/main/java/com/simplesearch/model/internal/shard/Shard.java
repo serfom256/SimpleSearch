@@ -17,8 +17,8 @@ public class Shard {
         service = new QueryService(new Trie());
     }
 
-    public void save(String key, int metadataId) {
-        service.save(key, metadataId);
+    public void save(String key, int idx) {
+        service.save(key, idx);
     }
 
     public List<LookupResult> find(Query query) {

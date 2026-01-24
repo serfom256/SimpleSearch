@@ -15,5 +15,5 @@ import com.simplesearch.model.internal.document.Document;
 public class IndexingDTO {
     private int documentsIndexed;
     private int entitiesIndexed;
-    private Map<String, List<Document>> total;
+    private Map<String, List<Document>> documents;
 }

@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.simplesearch.model.internal.document.Document;
@@ -14,7 +12,6 @@ import java.io.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 @Slf4j
 @Repository
@@ -22,34 +19,35 @@ import java.sql.Statement;
 public class DocumentsRepository implements MetadataRepository {
 
     private final JdbcTemplate jdbcTemplate;
-    private static final String CREATE_NEW_ENTRY_QUERY = "INSERT INTO data(data, idx) VALUES(?, ?)";
+    private static final String CREATE_NEW_ENTRY_QUERY = "INSERT IGNORE INTO data(id, data, idx) VALUES(?, ?, ?) ";
     private static final String SELECT_METADATA_QUERY = "SELECT data from data where id = ?";
 
     public Integer serialize(String idx, Document metadata) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        int hash = metadata.hashCode();
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(CREATE_NEW_ENTRY_QUERY, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(CREATE_NEW_ENTRY_QUERY);
             try {
-                write(idx, metadata, ps);
+                write(hash, idx, metadata, ps);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return ps;
-        }, keyHolder);
-        return keyHolder.getKey().intValue();
+        });
+        return hash;
     }
 
     public Document deserialize(int id) {
         return jdbcTemplate.queryForObject(SELECT_METADATA_QUERY, (rs, rowNum) -> read(rs), id);
     }
 
-    private void write(String idx, Document obj, PreparedStatement ps) throws SQLException, IOException {
+    private void write(int id, String idx, Document obj, PreparedStatement ps) throws SQLException, IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
         objectOutputStream.writeObject(obj);
         objectOutputStream.close();
-        ps.setBytes(1, byteArrayOutputStream.toByteArray());
-        ps.setString(2, idx);
+        ps.setLong(1, id);
+        ps.setBytes(2, byteArrayOutputStream.toByteArray());
+        ps.setString(3, idx);
     }
 
     private Document read(ResultSet rs) {

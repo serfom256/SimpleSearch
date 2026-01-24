@@ -21,7 +21,7 @@ import org.springframework.http.MediaType;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-public class FilesController {
+public class FileController {
 
     private final LocalFileIndexingService localFileService;
     private final MultipartIndexingService multipartFileService;

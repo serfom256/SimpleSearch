@@ -10,7 +10,6 @@ import com.simplesearch.repository.SessionRepository;
 import com.simplesearch.service.SearchService;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,7 +38,6 @@ public class DataIndexerDefaultImpl implements DataIndexer {
     private static final int DATA_SIZE_THRESHOLD = 10_000;
     private static final int THREADS_COUNT = 10;
 
-    @Autowired
     public DataIndexerDefaultImpl(SearchService searchService, ShardList shards, SessionRepository repository) {
         this.shards = shards;
         this.repository = repository;
@@ -74,10 +73,11 @@ public class DataIndexerDefaultImpl implements DataIndexer {
 
     @Override
     public int getIndexedCountBySessionId(String sessionId) {
-        List<IndexingThread> list = runningSessions.get(sessionId);
-        if (list == null)
-            return -1;
-        return list.stream().mapToInt(IndexingThread::getIndexed).sum();
+        return Optional.ofNullable(runningSessions.get(sessionId))
+                .orElse(Collections.emptyList())
+                .stream()
+                .mapToInt(IndexingThread::getIndexed)
+                .sum();
     }
 
     private List<IndexingThread> makeIndexesSync(Map<String, List<Document>> indexes) {

@@ -9,33 +9,33 @@ import java.util.List;
 
 @Slf4j
 public class QueryService {
-    private final Trie trieMap;
+    private final Trie trie;
     private final QueryFuzzyMatcher searcher;
     private final TriePrefixMatcher prefixMatcher;
 
     public QueryService(Trie trieMap) {
-        this.trieMap = trieMap;
+        this.trie = trieMap;
         prefixMatcher = new TriePrefixMatcher();
         searcher = new QueryFuzzyMatcher(trieMap);
     }
 
-    public void save(String key, int metadataId) {
+    public void save(String key, int idx) {
         if (key.length() == 0) {
             log.warn("Skipping key with length 0");
             return;
         }
-        trieMap.add(key.toLowerCase(), metadataId);
+        trie.add(key, idx);
     }
 
     public List<LookupResult> find(String query, int distance, int count, boolean fuzziness) {
-        return searcher.lookup(query.toLowerCase(), distance, count, fuzziness);
+        return searcher.lookup(query, distance, count, fuzziness);
     }
 
     public List<LookupResult> matchPrefix(String query, int distance, int count) {
-        return prefixMatcher.matchPrefix(query.toLowerCase(), distance, count, trieMap.getRootInstance());
+        return prefixMatcher.matchPrefix(query, distance, count, trie.getRootInstance());
     }
 
     public int getMapSize() {
-        return (int)trieMap.getSize();
+        return (int) trie.getSize();
     }
 }

@@ -4,7 +4,7 @@ use simplesearch;
 drop table if exists data;
 create table if not exists data
 (
-    id   int primary key not null auto_increment,
+    id   int primary key not null,
     data blob,
     idx  varchar(512) CHARACTER SET utf8mb4
 );

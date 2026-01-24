@@ -38,7 +38,7 @@ public class DataReadingService {
     private void indexFilesRecursively(File path, IndexingDTO dto, Set<String> matched, List<Character> regex) {
         File[] list = path.listFiles();
         if (matched.contains(getFileExtension(path))) {
-            addToMap(dto.getTotal(), createPathIndex(path));
+            addToMap(dto.getDocuments(), createPathIndex(path));
             calcIndexedDocs(dto, 1, 1);
         }
         if (list == null) {
@@ -52,7 +52,7 @@ public class DataReadingService {
                     readFile(f, dto, regex);
                 }
                 if (matched.contains("") && !getFileExtension(f).isEmpty()) {
-                    addToMap(dto.getTotal(), createPathIndex(f));
+                    addToMap(dto.getDocuments(), createPathIndex(f));
                     calcIndexedDocs(dto, 1, 1);
                 }
             }
@@ -72,7 +72,7 @@ public class DataReadingService {
 
     private void readFile(File f, IndexingDTO response, List<Character> regex) {
         Map<String, List<Document>> read = readerCommand.getReaderByExtension(getFileExtension(f)).read(f, regex);
-        addToMap(response.getTotal(), read);
+        addToMap(response.getDocuments(), read);
         calcIndexedDocs(response, 1, read.size());
     }
 

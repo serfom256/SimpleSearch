@@ -35,7 +35,7 @@ public class MultipartIndexingService implements FileIndexingService<MultipartFi
 
         IndexingDTO indexingDTO = dataReadingService.collectEntities(request);
         long indexingTime = System.currentTimeMillis() - startTime;
-        IndexingSession session = sessionService.startIndexing(indexingDTO.getTotal(),
+        IndexingSession session = sessionService.startIndexing(indexingDTO.getDocuments(),
                 indexingDTO.getEntitiesIndexed());
 
         return new IndexingResponse(session.getId(), indexingTime, indexingDTO.getDocumentsIndexed(),

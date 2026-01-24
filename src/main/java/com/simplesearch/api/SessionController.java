@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class SessionController {
+    
     private final SessionService sessionService;
-
 
     @GetMapping("/session/{id}")
     public ResponseEntity<IndexingSession> session(@PathVariable String id) {

@@ -26,10 +26,10 @@ public class IndexingThread extends Thread {
         }
         int i = 0;
         final int shardsCount = Math.max(shards.size(), 1);
-        for (int j = start; j < end; j++) {
+        for (int j = start; j < end; j++, i++) {
             Map.Entry<String, List<Document>> entry = indexes.get(j);
             for (Document md : entry.getValue()) {
-                shards.get(++i % shardsCount).save(entry.getKey(), searchService.serialize(entry.getKey(), md));
+                shards.get(i % shardsCount).save(entry.getKey(), searchService.serialize(entry.getKey(), md));
             }
             idx = i;
         }
