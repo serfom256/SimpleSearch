@@ -1,0 +1,5 @@
+rootProject.name = 'simplesearch-root'
+include ':simplesearch'
+include ':simplesearch-ui'
+
+enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'

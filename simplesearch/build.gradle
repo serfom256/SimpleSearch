@@ -1,23 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '3.5.9'
-    id("io.spring.dependency-management") version "1.1.5"
+    id 'io.spring.dependency-management' version '1.1.5'
     id 'java'
-}
-
-group = 'com.simplesearch'
-
-sourceCompatibility = '17'
-
-jar {
-    manifest {
-        attributes 'Main-Class': 'com.simplesearch.SimpleSearchApplication'
-    }
-}
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
 }
 
 repositories {
@@ -34,4 +18,5 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'org.apache.poi:poi-ooxml:5.5.1'
     implementation 'org.apache.pdfbox:pdfbox:2.0.27'
+    implementation projects.simplesearchUi
 }
