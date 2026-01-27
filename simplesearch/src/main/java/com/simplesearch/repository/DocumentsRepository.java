@@ -19,7 +19,7 @@ import java.sql.SQLException;
 public class DocumentsRepository implements MetadataRepository {
 
     private final JdbcTemplate jdbcTemplate;
-    private static final String CREATE_NEW_ENTRY_QUERY = "INSERT IGNORE INTO data(id, data, idx) VALUES(?, ?, ?) ";
+    private static final String CREATE_NEW_ENTRY_QUERY = "INSERT INTO data (id, data, idx) VALUES (?, ?, ?) ON CONFLICT (id) DO NOTHING";
     private static final String SELECT_METADATA_QUERY = "SELECT data from data where id = ?";
 
     public Integer serialize(String idx, Document metadata) {

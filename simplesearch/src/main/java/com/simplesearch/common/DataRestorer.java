@@ -20,7 +20,6 @@ import java.sql.ResultSet;
 
 @Slf4j
 @Component
-@DependsOn("dbCreator")
 @ConditionalOnProperty(value = "simplesearch.restore.data", havingValue = "true")
 @RequiredArgsConstructor
 public class DataRestorer {

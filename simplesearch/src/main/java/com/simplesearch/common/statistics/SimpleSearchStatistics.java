@@ -5,20 +5,17 @@ import com.simplesearch.model.internal.shard.Shard;
 import com.simplesearch.model.internal.shard.ShardInfoHeader;
 import com.simplesearch.model.internal.shard.ShardState;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class SimpleSearchStatistics {
 
     private final ShardList shardList;
-
-    @Autowired
-    public SimpleSearchStatistics(ShardList shardList) {
-        this.shardList = shardList;
-    }
 
     public ShardInfoHeader getShardsState() {
         ShardInfoHeader shardInfoHeader = new ShardInfoHeader();

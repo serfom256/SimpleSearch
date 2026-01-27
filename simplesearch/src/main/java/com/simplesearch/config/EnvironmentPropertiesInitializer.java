@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@DependsOn("dbCreator")
 public class EnvironmentPropertiesInitializer implements BeanPostProcessor, InitializingBean, EnvironmentAware {
 
     private final JdbcTemplate jdbcTemplate;

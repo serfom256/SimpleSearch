@@ -1,9 +1,8 @@
 package com.simplesearch.core.model;
 
-import com.simplesearch.config.Config;
+import com.simplesearch.config.EnvironmentWrapper;
 import com.simplesearch.model.internal.shard.Shard;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -18,9 +17,9 @@ public class ShardList implements Iterable<Shard> {
     private static final int DEFAULT_SHARDS = 6;
     private final List<Shard> shards;
 
-    @Autowired
-    public ShardList(Config config) {
-        final int shardsAmount = Integer.parseInt(config.getProperty(SHARDS_USED.getValue(), String.valueOf(DEFAULT_SHARDS)));
+    public ShardList(EnvironmentWrapper wrapper) {
+        final int shardsAmount = Integer
+                .parseInt(wrapper.getProperty(SHARDS_USED.getValue(), String.valueOf(DEFAULT_SHARDS)));
         shards = initShards(shardsAmount);
     }
 

@@ -1,8 +1,7 @@
 package com.simplesearch.config;
 
 public enum GlobalConstants {
-    SHARDS_USED("simplesearch.shards.used"),
-    DDL_ON_STARTUP("simplesearch.ddl-on-startup");
+    SHARDS_USED("simplesearch.shards.used");
 
     private final String value;
 

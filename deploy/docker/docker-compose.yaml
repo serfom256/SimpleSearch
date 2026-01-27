@@ -1,0 +1,12 @@
+services:
+  postgres:
+    image: postgres:17.4
+    container_name: simplesearch-postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: '0000'
+      POSTGRES_DB: simplesearch
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./data:/var/lib/postgresql/data

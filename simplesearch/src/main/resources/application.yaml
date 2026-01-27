@@ -4,13 +4,14 @@ server:
 spring:
     main.banner-mode: off
     datasource:
-        url: 'jdbc:mysql://localhost:3306/simplesearch'
-        username: 'root'
+        url: 'jdbc:postgresql://localhost:5432/simplesearch'
+        username: 'user'
         password: '0000' 
+    liquibase:
+        change-log: classpath:db/changelog/master.xml
 
 simplesearch:
     restore.data: true
-    ddl-on-startup: true
 
 spring.servlet.multipart.max-file-size: 100MB
 spring.servlet.multipart.max-request-size: 100MB
