@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
-@RestController
-@RequestMapping("/api/v1")
 @RequiredArgsConstructor
-public class SearchController {
+public class SearchController implements SimpleSearchApi {
 
     private final AsyncQueryExecutor executor;
 

@@ -4,6 +4,10 @@ plugins {
 node {
     download = false
 }
-tasks.named('webjarClean').configure { enabled = false }
-tasks.named('webjarWatch').configure { enabled = false }
-tasks.named('webjarTest').configure { enabled = false }
+webjarWatch { enabled = false }
+webjarTest { enabled = false }
+
+webjarClean {
+    actions.clear()
+    delete file("dist")
+}

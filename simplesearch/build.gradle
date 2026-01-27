@@ -12,12 +12,22 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    compileOnly 'org.projectlombok:lombok'
+
     implementation 'org.postgresql:postgresql:42.7.9'
     implementation 'org.liquibase:liquibase-core'
-    annotationProcessor 'org.projectlombok:lombok'
+
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'org.apache.poi:poi-ooxml:5.5.1'
     implementation 'org.apache.pdfbox:pdfbox:2.0.27'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
     implementation projects.simplesearchUi
+}
+
+bootJar {
+    from("../simplesearch-ui/dist") {
+        into "BOOT-INF/classes/static"
+    }
 }

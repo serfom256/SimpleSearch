@@ -1,5 +1,4 @@
 server:
-    servlet.contextPath: /simplesearch
     port: 8050
 spring:
     main.banner-mode: off
@@ -9,9 +8,10 @@ spring:
         password: '0000' 
     liquibase:
         change-log: classpath:db/changelog/master.xml
+    servlet:
+        multipart:
+            max-file-size: 100MB
+            max-request-size: 100MB
 
 simplesearch:
     restore.data: true
-
-spring.servlet.multipart.max-file-size: 100MB
-spring.servlet.multipart.max-request-size: 100MB
